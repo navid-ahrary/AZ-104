@@ -1,4 +1,4 @@
-# Micorosft Azure Learning
+# Learning Documents
 
 ## Table of contents
 
