@@ -1,4 +1,4 @@
-# AZ-104 Microsoft Azure Administrator
+# Manage Identities and Governance
 
 ## Table of contents
 
@@ -13,6 +13,7 @@
     - [Create user accounts](#creat-user-accounts)
     - [Create group accounts](#create-group-accounts)
     - [Administrative units](#administative-units)
+  - [Manage Subscriptions](#manage-subscriptions)
 
 ## Manage Identities and Governance
 
@@ -158,3 +159,5 @@ Microsoft Entra ID allows your organization to define two different types of gro
 #### Administative Units:
 
 Restrict administrative scope by using administrative units for your organization. The division of roles and responsibilities is especially helpful for organizations that have many independent divisions.
+
+### Manage Subscriptions:
