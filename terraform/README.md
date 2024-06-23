@@ -7,14 +7,17 @@
 ### Remote State
 
 In Azure, we use **azurerm** backend. The backend is a block in _Terraform_ block like this:
-`Terraform {
+
+```
+Terraform {
         backend "azurerm" {
             key = "value"
             storage_account_name = "value"
             container_name = "value"
             sas_token = "value"
         }
-}`
+}
+```
 
 The backend is an _Azure Storage Account_ that is store the state file in a container.
 
