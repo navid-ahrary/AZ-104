@@ -1,8 +1,8 @@
 # Terraform in Azure
 
-## Contents
+## Table of Contents
 
-    - [Remote State](#remote-state)
+- [Remote State](#remote-state)
 
 ### Remote State
 
