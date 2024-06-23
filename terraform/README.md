@@ -6,7 +6,7 @@
 
 ### Remote State
 
-In Azure, we use **azurerm** backend. The backend is a block in _Terraform_ block like this:
+In Azure, we use _azurerm_ backend. The backend is a block in _Terraform_ block like this:
 
 ```
 Terraform {
@@ -20,6 +20,10 @@ Terraform {
 ```
 
 The backend is an _Azure Storage Account_ that is store the state file in a container.
+The properties of backend can be assigned:
+1- hard-coded in the block
+2- assigned in `terrafrom init -backend-config='key=value storage_account=value' ...`
+3- a key-value file in `terrafrom init -backend-config=backend-config.txt`
 
 Benefit of Storage Account:
 
