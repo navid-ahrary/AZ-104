@@ -10,12 +10,16 @@ In Azure, we use _azurerm_ backend. The backend is a block in _Terraform_ block 
 
 ```
 Terraform {
-        backend "azurerm" {
-            key = "value"
-            storage_account_name = "value"
-            container_name = "value"
-            sas_token = "value"
-        }
+    requried_providers {
+       ...
+    }
+
+    backend "azurerm" {
+        key = "value"
+        storage_account_name = "value"
+        container_name = "value"
+        sas_token = "value"
+    }
 }
 ```
 
