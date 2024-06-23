@@ -9,7 +9,7 @@
 In Azure, we use _azurerm_ backend. The backend is a block in _Terraform_ block like this:
 
 ```
-Terraform {
+terraform {
     requried_providers {
        ...
     }
