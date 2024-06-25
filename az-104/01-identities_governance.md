@@ -14,6 +14,11 @@
     - [Create group accounts](#create-group-accounts)
     - [Administrative units](#administative-units)
   - [Manage Subscriptions](#manage-subscriptions)
+    - [Azure Region](#azure-region)
+    - [Subscriptions](#subscriptions)
+    - [Obtain a subscription](#obtain-a-subscription)
+    - [Cost Management](#cost-management)
+  - [Azure Policy](#azure-policy)
 
 ## Manage Identities and Governance
 
@@ -161,3 +166,78 @@ Microsoft Entra ID allows your organization to define two different types of gro
 Restrict administrative scope by using administrative units for your organization. The division of roles and responsibilities is especially helpful for organizations that have many independent divisions.
 
 ### Manage Subscriptions:
+
+#### Azure Region:
+
+A region is a geographical area on the planet containing at least one, but potentially multiple datacenters. The datacenters are in close proximity and networked together with a low-latency network.
+Most Azure regions are paired with another region within the same geography to make a regional pair (or paired regions). Regional pairs help to support always-on availability of Azure resources used by your infrastructure.
+
+_Chatactrisitics:_
+
+- **Physical isolation:** Microsoft preferes at least 300 miles of separation between datacenters in regional pair to reduce impact of power outages, natural disaster, civil unrest, or physical network outages on both regions at once.
+- **Platform-provided replication:** Some services like Geo-Redundant Storage provide automatic replication to the paired region.
+- **Region recovery order:** During a broad outage, recovery of one region is prioritized out of every pair. Applications that are deployed across paired regions are guaranteed to have one of the regions recovered with priority.
+- **Sequential updates:** Planned Azure system updates are rolled out to paired regions sequentially (not at the same time). Rolling updates minimizes downtime, reduces bugs, and logical failures in the rare event of a bad update.
+- **Data residency:** Regions reside within the same geography as their enabled set (except for the Brazil South and Singapore regions).
+
+_Considerations_:
+
+- Consider service support by region. Research region and service availability. Some services or Azure Virtual Machines features are available only in certain regions, such as specific Virtual Machines sizes or storage types.
+- Consider services that don't require regions. Identify services that don't need region support. Some global Azure services that don't require you to select a region. These services include Microsoft Entra ID, Microsoft Azure Traffic Manager, and Azure DNS.
+- Consider benefits of data residency. Take advantage of the benefits of data residency offered by regional pairs. This feature can help you meet requirements for tax and law enforcement jurisdiction purposes.
+
+### Subscriptions:
+
+An Azure subscription is a logical unit of Azure services that's linked to an Azure account. Subscriptions help you organize access to Azure cloud service resources, and help you control how resource usage is reported, billed, and paid.
+
+![Subscriptions and services](./assets/azure-subscriptions-e855533e.png "Subscriptions and services")
+
+_Things to Know:_
+
+- Each subscription can have a different billing and payment configuration.
+- If your Azure account is the only account associated with a subscription, you're responsible for the billing requirements.
+- Billing for Azure services is done on a per-subscription basis.
+
+### Obtain a subscription:
+
+_Azure subscription Types:_
+Free, Pay-As-You-Go, Enterprise Agreement, and Student.
+
+- Consider trying Azure for free. An Azure free subscription includes a monetary credit to spend on any service for the first 30 days. You get free access to the most popular Azure products for 12 months, and access to more than 25 products that are always free. An Azure free subscription is an excellent way for new users to get started.
+  - To set up a free subscription, you need a phone number, a credit card, and a Microsoft account.
+  - The credit card information is used for identity verification only. You aren't charged for any services until you upgrade to a paid subscription.
+- Consider paying monthly for used services. A Pay-As-You-Go (PAYG) subscription charges you monthly for the services you used in that billing period. This subscription type is appropriate for a wide range of users, from individuals to small businesses, and many large organizations as well.
+- Consider using an Azure Enterprise Agreement. An Enterprise Agreement provides flexibility to buy cloud services and software licenses under one agreement. The agreement comes with discounts for new licenses and Software Assurance. This type of subscription targets enterprise-scale organizations.
+- Consider supporting Azure for students. An Azure for Students subscription includes a monetary credit that can be used within the first 12 months.
+  - Students can select free services without providing a credit card during the sign-up process.
+  - You must verify your student status through your organizational email address.
+
+### Cost Management
+
+- Review the Microsoft Cost Management recommendations to learn how you can optimize and improve efficiency by identifying idle and underutilized resources. Recommendations can reveal less expensive resource options. When you act on the recommendations, you change the way you use your resources to save money. Using recommendations is an easy process:
+
+1. View cost optimization recommendations to see potential usage inefficiencies.
+2. Act on a recommendation to modify your Azure resource use and implement a more cost-effective option.
+3. Verify the new action to make sure the change has the desired effect.
+
+### Tag
+
+- A resource or resource group can have a maximum of 50 tag name/value pairs.
+- Tags applied to a resource group aren't inherited by the resources in the resource group.
+- Retrieve related resources from other resource groups by searching on the tag name or value.
+- Group resources like virtual machines by cost center and production environment. When you download the resource usage comma-separated values (CSV) file for your services, the tags appear in the Tags column.
+
+### Apply cost savings
+
+- **Reservation**: Save money by paying ahead. Pre-paying allows you to get a discount on the resources you use. Reservations can significantly reduce your virtual machine, SQL database compute, Azure Cosmos DB, or other resource costs up to 72% on pay-as-you-go prices. Reservations provide a billing discount and don't affect the runtime state of your resources.
+- **Azure Hybrid Benefits**: Save on cost while optimizing your hybrid environment by applying your existing Windows Server, SQL Server licenses or Linux subscriptions to Azure Hybrid Benefit.
+  Azure Hybrid Benefits helps maximize the value of existing on-premises Windows Server or SQL Server license investments when migrating to Azure. With using our own license on Azure services, We can can Azure and that utilizing software support (Azure, RedHat, SUSE) together and save up to 85% in costs. We can use our license on both on-premise and Azure simultaneously up to _180 days_ in migration period.
+  Access pricing benefits if you have a license that includes [_**Software Assurance**_](./assets/Software-Assurance-Program-Guide.pdf). _Software Assurance_ includes an extensive set of technologies, services, rights, and benefits to help you and your organization get the most out of your investments in IT and can help you save time and money.
+- **Azure Credits**: Use the monthly credit benefit to develop, test, and experiment with new solutions on Azure. As a Visual Studio subscriber, you could use Microsoft Azure at no extra charge. With your monthly Azure credit, Azure is your personal sandbox for development and testing.
+- **Azure regions**: Compare pricing across regions. Pricing can vary from one region to another, even in the US.
+- **Budgets**: Use budgets to compare and track spending as you analyze costs.
+- **Pricing Calculator**: The _Pricing Calculator_ provides estimates in all areas of Azure, including compute, networking, storage, web, and databases.
+
+### Azure Policy:
+
+Azure Policy is a service in Azure that enables you to create, assign, and manage policies to control or audit your resources. These policies enforce different rules over your resource configurations so the configurations stay compliant with corporate standards.
