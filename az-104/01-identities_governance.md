@@ -19,6 +19,12 @@
     - [Obtain a subscription](#obtain-a-subscription)
     - [Cost Management](#cost-management)
   - [Azure Policy](#azure-policy)
+    - [Management Group](#management-group)
+  - [Configure role-based access control](#configure-role-based-access-control)
+    - [Role Definition](#role-definition)
+    - [Role Assignment](#role-assignment)
+  - [Create User and Group in Entra ID](#create-user-and-group-in-entra-id)
+  - [Secure Resource with Azure RBAC](#secure-resource-with-azure-rbac)
 
 ## Manage Identities and Governance
 
@@ -240,4 +246,191 @@ Free, Pay-As-You-Go, Enterprise Agreement, and Student.
 
 ### Azure Policy:
 
-Azure Policy is a service in Azure that enables you to create, assign, and manage policies to control or audit your resources. These policies enforce different rules over your resource configurations so the configurations stay compliant with corporate standards.
+Azure Policy is a **service** in Azure that enables you to create, assign, and manage policies to control or audit your resources. These policies enforce different rules over your resource configurations so the configurations stay compliant with corporate standards.
+
+#### Management Group:
+
+Azure management groups provide a level of scope and control above your subscriptions
+
+- By default, all new subscriptions are placed under the top-level management group, or root group.
+- All subscriptions within a management group automatically **inherit** the conditions applied to that management group.
+- A management group tree can support up to six levels of depth.
+- Azure role-based access control authorization for management group operations isn't enabled by default.
+- All subscriptions within a management group inherit the conditions applied to the management group. You can apply policies to a management group to limit the regions available for creating virtual machines (VMs).
+- A management group has a directory unique identifier (ID) and a display name. The ID is used to submit commands on the management group. The ID value can't be changed after it's created because it's used throughout the Azure system to identify the management group. The display name for the management group is optional and can be changed at any time.
+
+Advantages of _Management Group_:
+
+- **Enforce rules and compliance**: Enable built-in policies, or build custom policies for all resource types. Support real-time policy evaluation and enforcement, and periodic or on-demand compliance evaluation.
+- **Apply policies at scale**:Apply policies to a management group with control across your entire organization. Apply multiple policies and aggregate policy states with policy initiative. Define an exclusion scope.
+- **Perform remediation**: Conduct real-time remediation, and remediation on your existing resources.
+
+_Example_:
+
+- You can enforce a required tag on resources and define the allowed values.
+- You can specify the set of virtual machine SKUs that your organization can deploy.
+- You can choose the geographic locations or regions that are available to your organization.
+
+#### Create Azure Policy:
+
+A **_policy definition_** describes the compliance conditions for a resource, and the actions to complete when the conditions are met. One or more policy definitions are grouped into an **_initiative definition_**, to control the scope of your policies and evaluate the compliance of your resources.
+
+![Policy](./assets/implement-azure-policy-b4a4a47c.png)
+
+[Diff between _Azure Policy_ and _Azure Initiative_ in TechCommunity](https://techcommunity.microsoft.com/t5/itops-talk-blog/azure-policy-initiatives-vs-azure-policies-when-should-i-use-one/ba-p/1229167)
+
+There are four basic steps to create and work with policy definitions in Azure Policy.
+
+- **Step 1 Create policy definitions**:
+  A policy definition expresses a condition to evaluate and the actions to perform when the condition is met. You can create your own policy definitions, or choose from built-in definitions in Azure Policy.
+  To summarize, Azure policy is basically 3 components; **_policy definition_** , **_assignment_** and **_parameters_**.
+
+  - _Policy definition_ is the conditions which you want controlled. There are built in definitions such as controlling what type of resources can be deployed to enforcing the use of tags on all resources.
+  - _Policy assignment_ is the scope of what the policy definition can take effect around. Scope of assignment can be assigned to a individual, resource, resource group or management group. Policy assignments are inherited by all child resources.
+  - _Policy parameters_ are used by reducing the number of policy definitions you must create. Parameters would be used to define which type of VM SKUs to deploy or defining a specific location.
+
+  examples of built-in policy definitions:
+
+  - Allowed virtual machine size SKUs
+  - Allowed locations
+  - Configure Azure Device Update for IoT Hub accounts to disable public network access
+
+- **Step 2 Create an initiative definition**:
+  An Azure initiative is a collection of Azure policy definitions that are grouped together towards a specific goal or purpose in mind. Azure initiatives simplify management of your policies by grouping a set of policies together as one single item. You can create your own initiative definitions, or use built-in definitions in Azure Policy. You can use an initiative definition to ensure resources are compliant with security regulations.
+  When you create an initiative definition, be sure the definition uses the specific **JSON** format required by Azure.
+
+  Here are some examples of built-in initiative definitions:
+
+  - _Audit machines with insecure password security settings_: Use this initiative to deploy an audit policy to specified resources in your organization. The definition evaluates the resources to check for insecure password security settings. This initiative is located in the Guest Configuration category.
+  - _Configure Windows machines to run Azure Monitor Agent and associate them to a Data Collection Rule_: Use this initiative to monitor and secure your Windows VMs, Virtual Machine Scale Sets, and Arc machines. The definition deploys the Azure Monitor Agent extension and associates the resources with a specified Data Collection Rule. This initiative is located in the Monitoring category.
+  - _Configure Azure Defender to be enabled on SQL servers_: Enable Azure Defender on your Azure SQL Servers to detect anomalous activities indicating unusual and potentially harmful attempts to access or exploit databases. This initiative is located in the SQL category.
+
+- **Step 3: Scope the initiative definition**:
+  Azure Policy lets you control how your initiative definitions are applied to resources in your organization. You can limit the scope of an initiative definition to specific management groups, subscriptions, or resource groups.
+
+- **Step 4: Determine compliance**
+
+### Configure role-based access control:
+
+Azure Administrators need to secure access to their Azure resources like virtual machines (VMs), websites, networks, and storage. Administrators need mechanisms to help them manage who can access their resources, and what actions are allowed.
+Role-based access control (RBAC) is a mechanism that can help you **manage who can access your Azure resources**. RBAC lets you determine what operations specific users can do on specific resources, and control what areas of a resource each user can access.
+Azure RBAC is an authorization system built on **Azure Resource Manager**. Azure RBAC provides fine-grained access management of resources in Azure.
+
+Concepts:
+
+- _Security principal_ (WHO): An object that represents something that requests access to resources. Ex:User, group, service principal, managed identity.
+- _Role definition_ (What): A set of permissions that lists the allowed operations. Azure RBAC comes with built-in role definitions, but you can also create your own custom role definitions. Ex: Contributer, Reader, Owner, Administrator, User Access.
+- _Scope_ (WHERE): The boundary for the requested level of access, or "how much" access is granted. Ex: Management group, subscription, resource group, resource
+- _Role assignment_: An assignment attaches a role definition to a security principal at a particular scope. Users can grant the access described in a role definition by creating (attaching) an assignment for the role. Ex: Assign the Contributor role to a user scoped to a subscription
+
+#### Role definition
+
+A Role definition consists of sets of premission that are defined in JSON format. Permission sets such as _Action_, _NotAction_, _DataAction_, _NotDataAction_, _AssignableScopes_.
+
+![Role definition](./assets/role-definition-bf297cac.png)
+
+_Things to Know_:
+
+- The Owner built-in role has the highest level of access privilege in Azure.
+- The system subtracts NotActions permissions from Actions permissions to determine the effective permissions for a role.
+- The AssignableScopes permissions for a role can be management groups, subscriptions, resource groups, or resources.
+
+Role Scope:
+
+- Scope a role as available for assignment in two subscriptions: "/subscriptions/c276fc76-9cd4-44c9-99a7-4fd71546436e", "/subscriptions/e91d47c4-76f3-4271-a796-21b4ecfe3624"
+
+- Scope a role as available for assignment only in the Network resource group: "/subscriptions/c276fc76-9cd4-44c9-99a7-4fd71546436e/resourceGroups/Network"
+
+- Scope a role as available for assignment for all requestors: "/"
+
+Considerations:
+
+- Consider limiting access scope. Assign your roles with the minimum level of scope required to perform the job duties.
+- Consider controlling changes to data. Identify data or resources that should only be modified in specific scenarios and apply tight access control. Limit users to the least of amount of access they need to get their work done.
+- Consider applying deny assignments. Determine if you need to implement the deny assignment feature. Similar to a role assignment, a deny assignment attaches a set of deny actions to a user, group, or service principal at a particular scope for the purpose of denying access.
+
+#### Role assignment:
+
+A role assignment is the process of scoping a role definition to limit permissions for a requestor, such as a user, group, service principal, or managed identity.
+
+_Thigs to know_:
+
+- A resource inherits role assignments from its parent resource.
+- The effective permissions for a requestor are a combination of the permissions for the requestor's assigned roles, and the permissions for the roles assigned to the requested resources.
+
+Compare Azure roles to Microsoft Entra roles:
+
+Access management:
+Azure RBAC roles: Manages access to Azure resources
+Microsoft Entra ID roles: Manages access to Microsoft Entra resources
+
+Scope assignment:
+Azure RBAC roles: Scope can be specified at multiple levels, including management groups, subscriptions, resource groups, and resources
+Microsoft Entra ID roles: Scope is specified at the tenant level
+
+Role definitions:
+Azure RBAC roles:Roles can be defined via the Azure portal, the Azure CLI, Azure PowerShell, Azure Resource Manager templates, and the REST API
+Microsoft Entra ID roles: Roles can be defined via the Azure portal, the Azure CLI, Azure PowerShell, Azure Resource Manager templates, and the REST API
+
+Built-in role definitions are defined for several categories of services, tasks, and users. You can assign built-in roles at different scopes to support various scenarios, and build custom roles from the base definitions.
+
+Microsoft Entra ID also provides built-in roles to manage resources in Microsoft Entra ID, including users, groups, and domains. Microsoft Entra ID offers administrator roles that you can implement for your organization, such as Global admin, Application admin, and Application developer.
+
+![](./assets/role-based-authentication-b3dda7ae.png)
+
+- Microsoft Entra admin roles are used to manage resources in Microsoft Entra ID, such as users, groups, and domains. These roles are defined for the Microsoft Entra tenant at the root level of the configuration.
+- Azure RBAC roles provide more granular access management for Azure resources. These roles are defined for a requestor or resource and can be applied at multiple levels: the root, management groups, subscriptions, resource groups, or resources.
+
+### Create User and Group in Entra ID:
+
+What is User accounts in Entra ID:
+A user's account access consists of the type of user, their role assignments, and their ownership of individual objects.
+
+There are different types of user accounts in Microsoft Entra ID. Each type has a level of access specific to the scope of work expected to be done under each type of user account.
+Administrators have the highest level of access, followed by the member user accounts in the Microsoft Entra organization. Guest users have the most restricted level of access.
+
+Roles:
+
+- Administrator roles in Microsoft Entra ID allow users elevated access to control who is allowed to do what. allow a user to create or edit users, assign administrative roles to others, reset user passwords, manage user licenses, and more.
+- Memeber user: new person is joined to organization, have this native default roles. They can edit profile information.
+- Guest user: When you invite someone to collaborate with your organization, you add them to your Microsoft Entra organization as a guest user. Then, you can either send an invitation email that contains a redemption link or send a direct link to an app you want to share. Guest users sign in with their own work, school, or social identities. By default, Microsoft Entra member users can invite guest users. Someone with the User Administrator role can disable this default. When you invite someone to collaborate with your organization, you add them to your Microsoft Entra organization as a guest user. Then, you can either send an invitation email that contains a redemption link or send a direct link to an app you want to share. Guest users sign in with their own work, school, or social identities. By default, Microsoft Entra member users can invite guest users. Someone with the User Administrator role can disable this default.
+
+Create user: `az ad user create --dipalay-name displayName --password password --user-principal-name navid@email.com`
+Delete: `az ad user delete --id navid@email.com`
+
+_Microsoft Entra ID helps you to manage your cloud-based apps, on-premises apps, and resources by using your organization's groups._
+
+There are different ways you can assign access rights:
+
+- Direct assignment: Assign a user the required access rights by directly assigning a role that has those access rights.
+- Group assignment: Assign a group the required access rights, and members of the group will inherit those rights.
+- Rule-based assignment: Use rules to determine a group membership based on user or device properties. For a user account or device's group membership to be valid, the user or device must meet the rules. If the rules aren't met, the user account or device's group membership is no longer valid. The rules can be simple. You can select prewritten rules or write your own advanced rules.
+
+#### Group:
+
+dynamic assignment:
+You can create attribute-based rules to enable dynamic membership for a group in Microsoft Entra ID, part of Microsoft Entra. Dynamic group membership adds and removes group members automatically using membership rules based on member attributes. Example: _The membership of this group now depends on whether the user is in the United States._
+
+When the attributes of a user or a device change, the system evaluates all dynamic group rules in a directory to see if the change would trigger any group adds or removes. If a user or device satisfies a rule on a group, they're added as a member of that group. If they no longer satisfy the rule, they're removed. You can't manually add or remove a member of a dynamic group.
+
+#### Microsoft Entra B2B:
+
+You want the external team to collaborate with the internal developer team in a process that's easy and secure. With Microsoft Entra business to business (B2B), you can add people from other companies to your Microsoft Entra tenant as guest users.
+If your organization has multiple Microsoft Entra tenants, you may also want to use Microsoft Entra B2B to give a user in tenant A access to resources in tenant B. Each Microsoft Entra tenant is distinct and separate from other Microsoft Entra tenants and has its own representation of identities and app registrations.
+With Microsoft Entra B2B, you don't have to manage your external users' identities. The partner has the responsibility to manage its own identities on their tenant. External users continue to use their current identities to collaborate with your organization.
+After you invite a user, their account is added to Microsoft Entra ID, with a guest user type.
+
+##### Add guest users to an application:
+
+### Secure Resource with Azure RBAC:
+
+Who (Service Principal), What (Role definition), Where (Scope) => Role Assignment
+
+### Self-service Password reset (SSPR):
+
+A strong, two-method authentication policy is always applied to accounts with an administrator role, regardless of your configuration for other users.
+The security-question method isn't available to accounts associated with an administrator role.
+
+License requirements
+
+There are three editions of Microsoft Entra ID: free, Premium P1, and Premium P2. The password-reset functionality you can use depends on your edition.
