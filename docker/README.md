@@ -39,7 +39,7 @@ Functions and Benefits:
 - **Self-contained**. Each container has everything it needs to function with no reliance on any pre-installed dependencies on the host machine.
 - **Isolated**. Since containers are run in isolation, they have minimal influence on the host and other containers, increasing the security of your applications.
 
-<img src='./assets/virtual-machine-hardware-software.png' height=300> <img src='./assets/docker-container-hardware-software.png' height=300>
+<img src="./assets/virtual-machine-hardware-software.png" height=300> <img src="./assets/docker-container-hardware-software.png" height=300>
 
 Docker is the most widely used containerization tool, with an 82.84% market share. Docker is so popular today that "Docker" and "containers" are used interchangeably. However, the first container-related technologies were available for years—even decades—before Docker was publicly released as open source in 2013.
 
@@ -126,13 +126,13 @@ _Docker uses a client/server architecture._
 
 - **Dockerfile:** Every Docker container starts with a simple text file containing instructions for how to build the Docker container image. Dockerfile automates the process of creating Docker images. It's essentially a list of CLI instructions that Docker Engine will run to assemble the image. Each instruction in a Dockerfile roughly translates to an image layer. The following diagram illustrates how a Dockerfile translates into a stack of layers in a container image.
 
-      <img src='./assets/layers.png' width=500>
+  <img src="./assets/layers.png" width=500>
 
   **Cached Layers:** When you run a build, the builder attempts to reuse layers from earlier builds. If a layer of an image is unchanged, then the builder picks it up from the build cache. If a layer has changed since the last build, that layer, and all layers that follow, must be rebuilt.
 
   The Dockerfile from the previous section copies all project files to the container (`COPY . .`) and then downloads application dependencies in the following step (`RUN go mod download`). If you were to change any of the project files, then that would invalidate the cache for the COPY layer. It also invalidates the cache for all of the layers that follow.
 
-      <img src='./assets/cache-bust.png' width=500>
+  <img src="./assets/cache-bust.png" width=500>
 
   Because of the current order of the Dockerfile instructions, the builder must download the Go modules again, despite none of the packages having changed since the last time.
 
@@ -155,7 +155,7 @@ _Docker uses a client/server architecture._
 
   Now if you edit your source code, building the image won't cause the builder to download the dependencies each time. The `COPY . .` instruction appears after the package management instructions, so the builder can reuse the `RUN go mod download` layer.
 
-      <img src='./assets/reordered-layers.png' width=500>
+    <img src="./assets/reordered-layers.png" width=500>
 
   **Multi-stage:**
 
@@ -403,7 +403,7 @@ CMD python /app/app.py
 
 Each layer is only a set of differences from the layer before it. Note that both adding, and removing files will result in a new layer. In the example above, the `$HOME/.cache` directory is removed, but will still be available in the previous layer and add up to the image's total size.
 
-<img src='./assets/container-layers.webp' width=400>
+<img src="./assets/container-layers.webp" width=400>
 
 _A storage driver handles the details about the way these layers interact with each other._
 
@@ -440,7 +440,7 @@ Docker also supports containers storing files in-memory on the host machine. Suc
 2. Bind mounts ( persisted storage )
 3. tmps mounts ( Just Linux in-memory )
 
-<img src='./assets/types-of-mounts-volume.webp' width=400>
+<img src="./assets/types-of-mounts-volume.webp" width=400>
 
 **Choose the right type of mount:**
 
