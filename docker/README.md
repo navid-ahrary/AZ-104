@@ -205,24 +205,24 @@ _Docker uses a client/server architecture._
 
       - FROM golang:1.21-alpine
 
-      * FROM golang:1.21-alpine AS base
+      + FROM golang:1.21-alpine AS base
       WORKDIR /src
       COPY go.mod go.sum .
       RUN go mod download
       COPY . .
-      *
-      * FROM base AS build-client
+      +
+      + FROM base AS build-client
       RUN go build -o /bin/client ./cmd/client
-      *
-      * FROM base AS build-server
+      +
+      + FROM base AS build-server
       RUN go build -o /bin/server ./cmd/server
 
       FROM scratch
 
       - COPY --from=0 /bin/client /bin/server /bin/
 
-      * COPY --from=build-client /bin/client /bin/
-      * COPY --from=build-server /bin/server /bin/
+      + COPY --from=build-client /bin/client /bin/
+      + COPY --from=build-server /bin/server /bin/
       ENTRYPOINT [ "/bin/server" ]
       ```
 
@@ -248,13 +248,13 @@ _Docker uses a client/server architecture._
       - COPY --from=build-server /bin/server /bin/
       - ENTRYPOINT [ "/bin/server" ]
 
-      * FROM scratch AS client
-      * COPY --from=build-client /bin/client /bin/
-      * ENTRYPOINT [ "/bin/client" ]
+      + FROM scratch AS client
+      + COPY --from=build-client /bin/client /bin/
+      + ENTRYPOINT [ "/bin/client" ]
 
-      * FROM scratch AS server
-      * COPY --from=build-server /bin/server /bin/
-      * ENTRYPOINT [ "/bin/server" ]
+      + FROM scratch AS server
+      + COPY --from=build-server /bin/server /bin/
+      + ENTRYPOINT [ "/bin/server" ]
       ```
 
       And now you can build the client and server programs as separate Docker images (tags):
@@ -266,6 +266,42 @@ _Docker uses a client/server architecture._
         REPOSITORY       TAG       IMAGE ID       CREATED          SIZE
         buildme-client   latest    659105f8e6d7   20 seconds ago   4.25MB
         buildme-server   latest    666d492d9f13   5 seconds ago    4.2MB
+      ```
+
+      ```
+      # Build stage
+      FROM node:20-alpine as builder
+      WORKDIR /usr/src/app
+      COPY package.json ./
+      RUN yarn install --frozen-lockfile
+      COPY . .
+      RUN yarn build
+
+      # Production stage
+      FROM node:20-alpine
+      WORKDIR /usr/src/app
+
+      # Create a non-root user and change ownership of the workdir
+      RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+      RUN chown -R appuser:appgroup /usr/src/app
+
+      # Copy built assets from the builder stage
+      COPY --from=builder /usr/src/app/dist ./dist
+      COPY --from=builder /usr/src/app/node_modules ./node_modules
+      COPY --from=builder /usr/src/app/package.json ./package.json
+
+      # Set environment variables
+      ENV HOST=0.0.0.0 PORT=5000
+
+      # Switch to non-root user`
+      USER appuser
+
+      # Expose the port the app runs on
+      EXPOSE ${PORT}
+
+      # Start the application
+      CMD ["node", "--max-old-space-size=12288", "dist/main"]
+
       ```
 
   #### Build arguments:
