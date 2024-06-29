@@ -132,6 +132,21 @@ _Docker uses a client/server architecture._
 
   The Dockerfile from the previous section copies all project files to the container (`COPY . .`) and then downloads application dependencies in the following step (`RUN go mod download`). If you were to change any of the project files, then that would invalidate the cache for the COPY layer. It also invalidates the cache for all of the layers that follow.
 
+  #### `CMD` vs. `INTERYPOINT`:
+
+  _CMD:_ To use when you want to override the complete command.
+
+  example:
+
+  `CMD [ "npm", "init" ]`
+  `$ docker run -t node npm install` => `CMD [ "npm", "install" ]`
+
+  _ENTRYPOINT:_ To use when you want to append some additional command.
+  example:
+
+  `ENTRYPOINT [ "npm", "init" ]`
+  `$ docker run -t node install` => `ENTRYPOINT [ "npm", "init", "install" ]`
+
   <img src="./assets/cache-bust.png" width=500>
 
   Because of the current order of the Dockerfile instructions, the builder must download the Go modules again, despite none of the packages having changed since the last time.
