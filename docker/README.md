@@ -142,6 +142,7 @@ _Docker uses a client/server architecture._
   `$ docker run -t node npm install` => `CMD [ "npm", "install" ]`
 
   _ENTRYPOINT:_ To use when you want to append some additional command.
+
   example:
 
   `ENTRYPOINT [ "npm", "init" ]`
