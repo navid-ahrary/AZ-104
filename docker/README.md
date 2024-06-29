@@ -132,7 +132,7 @@ _Docker uses a client/server architecture._
 
   The Dockerfile from the previous section copies all project files to the container (`COPY . .`) and then downloads application dependencies in the following step (`RUN go mod download`). If you were to change any of the project files, then that would invalidate the cache for the COPY layer. It also invalidates the cache for all of the layers that follow.
 
-  #### `CMD` vs. `INTERYPOINT`:
+  #### `CMD` vs. `ENTERYPOINT`:
 
   _CMD:_ To use when you want to override the complete command.
 
