@@ -383,6 +383,12 @@ $ docker run --network=my-net -itd --name=container3 busybox
 | ipvlan     | IPvlan networks provide full control over both IPv4 and IPv6 addressing. |
 | macvlan    | Assign a MAC address to a container.                                     |
 
+**Bridge:**
+A bridge network uses a software bridge which lets containers connected to the same bridge network communicate, while providing isolation from containers that aren't connected to that bridge network. The Docker bridge driver automatically installs rules in the host machine so that containers on different bridge networks can't communicate directly with each other.
+
+When you start Docker, a default bridge network (also called bridge) is created automatically, and newly-started containers connect to it unless otherwise specified. You can also create user-defined custom bridge networks. User-defined bridge networks are superior to the default bridge network.
+
+**Host:**
 If you use the `host` network mode for a container, that container's network stack isn't isolated from the Docker host (the container shares the host's networking namespace), and the container doesn't get its own IP-address allocated. For instance, if you run a container which binds to port `80` and you use `host` networking, the container's application is available on port `80` on the host's IP address.
 
 Host mode networking can be useful for the following use cases:
