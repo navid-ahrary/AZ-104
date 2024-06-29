@@ -383,6 +383,15 @@ $ docker run --network=my-net -itd --name=container3 busybox
 | ipvlan     | IPvlan networks provide full control over both IPv4 and IPv6 addressing. |
 | macvlan    | Assign a MAC address to a container.                                     |
 
+If you use the `host` network mode for a container, that container's network stack isn't isolated from the Docker host (the container shares the host's networking namespace), and the container doesn't get its own IP-address allocated. For instance, if you run a container which binds to port `80` and you use `host` networking, the container's application is available on port `80` on the host's IP address.
+
+Host mode networking can be useful for the following use cases:
+
+- To optimize performance
+- In situations where a container needs to handle a large range of ports
+
+This is because it doesn't require network address translation (NAT), and no "userland-proxy" is created for each port.
+
 #### Container networks
 
 In addition to user-defined networks, you can attach a container to another container's networking stack directly, using the `--network container:<name|id>` flag format.
