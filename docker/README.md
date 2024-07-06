@@ -15,6 +15,7 @@
   - [Drivers](#drivers)
   - [IP address and hostname](#ip-address-and-hostname)
   - [DNS services](#dns-services)
+- [Volumes](#volume)
 
 ### Introduction:
 
@@ -38,7 +39,7 @@ Functions and Benefits:
 - **Self-contained**. Each container has everything it needs to function with no reliance on any pre-installed dependencies on the host machine.
 - **Isolated**. Since containers are run in isolation, they have minimal influence on the host and other containers, increasing the security of your applications.
 
-<img src='./assets/virtual-machine-hardware-software.png' height=300> <img src='./assets/docker-container-hardware-software.png' height=300>
+<img src="./assets/virtual-machine-hardware-software.png" height=300> <img src="./assets/docker-container-hardware-software.png" height=300>
 
 Docker is the most widely used containerization tool, with an 82.84% market share. Docker is so popular today that "Docker" and "containers" are used interchangeably. However, the first container-related technologies were available for years—even decades—before Docker was publicly released as open source in 2013.
 
@@ -125,13 +126,29 @@ _Docker uses a client/server architecture._
 
 - **Dockerfile:** Every Docker container starts with a simple text file containing instructions for how to build the Docker container image. Dockerfile automates the process of creating Docker images. It's essentially a list of CLI instructions that Docker Engine will run to assemble the image. Each instruction in a Dockerfile roughly translates to an image layer. The following diagram illustrates how a Dockerfile translates into a stack of layers in a container image.
 
-      <img src='./assets/layers.png' width=500>
+  <img src="./assets/layers.png" width=500>
 
   **Cached Layers:** When you run a build, the builder attempts to reuse layers from earlier builds. If a layer of an image is unchanged, then the builder picks it up from the build cache. If a layer has changed since the last build, that layer, and all layers that follow, must be rebuilt.
 
   The Dockerfile from the previous section copies all project files to the container (`COPY . .`) and then downloads application dependencies in the following step (`RUN go mod download`). If you were to change any of the project files, then that would invalidate the cache for the COPY layer. It also invalidates the cache for all of the layers that follow.
 
-      <img src='./assets/cache-bust.png' width=500>
+  #### `CMD` vs. `ENTERYPOINT`:
+
+  _CMD:_ To use when you want to override the complete command.
+
+  example:
+
+  `CMD [ "npm", "init" ]`
+  `$ docker run -t node npm install` => `CMD [ "npm", "install" ]`
+
+  _ENTRYPOINT:_ To use when you want to append some additional command.
+
+  example:
+
+  `ENTRYPOINT [ "npm", "init" ]`
+  `$ docker run -t node install` => `ENTRYPOINT [ "npm", "init", "install" ]`
+
+  <img src="./assets/cache-bust.png" width=500>
 
   Because of the current order of the Dockerfile instructions, the builder must download the Go modules again, despite none of the packages having changed since the last time.
 
@@ -154,7 +171,7 @@ _Docker uses a client/server architecture._
 
   Now if you edit your source code, building the image won't cause the builder to download the dependencies each time. The `COPY . .` instruction appears after the package management instructions, so the builder can reuse the `RUN go mod download` layer.
 
-      <img src='./assets/reordered-layers.png' width=500>
+    <img src="./assets/reordered-layers.png" width=500>
 
   **Multi-stage:**
 
@@ -204,24 +221,24 @@ _Docker uses a client/server architecture._
 
       - FROM golang:1.21-alpine
 
-      * FROM golang:1.21-alpine AS base
+      + FROM golang:1.21-alpine AS base
       WORKDIR /src
       COPY go.mod go.sum .
       RUN go mod download
       COPY . .
-      *
-      * FROM base AS build-client
+      +
+      + FROM base AS build-client
       RUN go build -o /bin/client ./cmd/client
-      *
-      * FROM base AS build-server
+      +
+      + FROM base AS build-server
       RUN go build -o /bin/server ./cmd/server
 
       FROM scratch
 
       - COPY --from=0 /bin/client /bin/server /bin/
 
-      * COPY --from=build-client /bin/client /bin/
-      * COPY --from=build-server /bin/server /bin/
+      + COPY --from=build-client /bin/client /bin/
+      + COPY --from=build-server /bin/server /bin/
       ENTRYPOINT [ "/bin/server" ]
       ```
 
@@ -247,13 +264,13 @@ _Docker uses a client/server architecture._
       - COPY --from=build-server /bin/server /bin/
       - ENTRYPOINT [ "/bin/server" ]
 
-      * FROM scratch AS client
-      * COPY --from=build-client /bin/client /bin/
-      * ENTRYPOINT [ "/bin/client" ]
+      + FROM scratch AS client
+      + COPY --from=build-client /bin/client /bin/
+      + ENTRYPOINT [ "/bin/client" ]
 
-      * FROM scratch AS server
-      * COPY --from=build-server /bin/server /bin/
-      * ENTRYPOINT [ "/bin/server" ]
+      + FROM scratch AS server
+      + COPY --from=build-server /bin/server /bin/
+      + ENTRYPOINT [ "/bin/server" ]
       ```
 
       And now you can build the client and server programs as separate Docker images (tags):
@@ -265,6 +282,42 @@ _Docker uses a client/server architecture._
         REPOSITORY       TAG       IMAGE ID       CREATED          SIZE
         buildme-client   latest    659105f8e6d7   20 seconds ago   4.25MB
         buildme-server   latest    666d492d9f13   5 seconds ago    4.2MB
+      ```
+
+      ```
+      # Build stage
+      FROM node:20-alpine as builder
+      WORKDIR /usr/src/app
+      COPY package.json ./
+      RUN yarn install --frozen-lockfile
+      COPY . .
+      RUN yarn build
+
+      # Production stage
+      FROM node:20-alpine
+      WORKDIR /usr/src/app
+
+      # Create a non-root user and change ownership of the workdir
+      RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+      RUN chown -R appuser:appgroup /usr/src/app
+
+      # Copy built assets from the builder stage
+      COPY --from=builder /usr/src/app/dist ./dist
+      COPY --from=builder /usr/src/app/node_modules ./node_modules
+      COPY --from=builder /usr/src/app/package.json ./package.json
+
+      # Set environment variables
+      ENV HOST=0.0.0.0 PORT=5000
+
+      # Switch to non-root user`
+      USER appuser
+
+      # Expose the port the app runs on
+      EXPOSE ${PORT}
+
+      # Start the application
+      CMD ["node", "--max-old-space-size=12288", "dist/main"]
+
       ```
 
   #### Build arguments:
@@ -330,6 +383,21 @@ $ docker run --network=my-net -itd --name=container3 busybox
 | ipvlan     | IPvlan networks provide full control over both IPv4 and IPv6 addressing. |
 | macvlan    | Assign a MAC address to a container.                                     |
 
+**Bridge:**
+A bridge network uses a software bridge which lets containers connected to the same bridge network communicate, while providing isolation from containers that aren't connected to that bridge network. The Docker bridge driver automatically installs rules in the host machine so that containers on different bridge networks can't communicate directly with each other.
+
+When you start Docker, a default bridge network (also called bridge) is created automatically, and newly-started containers connect to it unless otherwise specified. You can also create user-defined custom bridge networks. User-defined bridge networks are superior to the default bridge network.
+
+**Host:**
+If you use the `host` network mode for a container, that container's network stack isn't isolated from the Docker host (the container shares the host's networking namespace), and the container doesn't get its own IP-address allocated. For instance, if you run a container which binds to port `80` and you use `host` networking, the container's application is available on port `80` on the host's IP address.
+
+Host mode networking can be useful for the following use cases:
+
+- To optimize performance
+- In situations where a container needs to handle a large range of ports
+
+This is because it doesn't require network address translation (NAT), and no "userland-proxy" is created for each port.
+
 #### Container networks
 
 In addition to user-defined networks, you can attach a container to another container's networking stack directly, using the `--network container:<name|id>` flag format.
@@ -376,3 +444,99 @@ Containers use the same DNS servers as the host by default, but you can override
 By default, containers inherit the DNS settings as defined in the `/etc/resolv.conf` configuration file. Containers that attach to the default bridge network receive a copy of this file. Containers that attach to a custom network use Docker's embedded DNS server. The embedded DNS server forwards external DNS lookups to the DNS servers configured on the host.
 
 The IP address of a DNS server. To specify multiple DNS servers, use multiple `--dns` flags. DNS requests will be forwarded from the container's network namespace so, for example, `--dns=127.0.0.1` refers to the container's own loopback address.
+
+### Storage:
+
+**Images and layers**
+
+A Docker image is built up from a series of layers. Each layer represents an instruction in the image's Dockerfile. Each layer _except_ the very last one is read-only. Consider the following Dockerfile:
+
+```
+# syntax=docker/dockerfile:1
+
+FROM ubuntu:22.04
+LABEL org.opencontainers.image.authors="org@example.com"
+COPY . /app
+RUN make /app
+RUN rm -r $HOME/.cache
+CMD python /app/app.py
+```
+
+- The `FROM` statement starts out by creating a layer from the `ubuntu:22.04` image.
+- The `LABEL` command only modifies the image's metadata, and doesn't produce a new layer.
+- The `COPY` command adds some files from your Docker client's current directory.
+- The first `RUN` command builds your application using the make command, and writes the result to a new layer. The second `RUN` command removes a cache directory, and writes the result to a new layer.
+- the `CMD` instruction specifies what command to run within the container, which only modifies the image's metadata, which doesn't produce an image layer.
+
+Each layer is only a set of differences from the layer before it. Note that both adding, and removing files will result in a new layer. In the example above, the `$HOME/.cache` directory is removed, but will still be available in the previous layer and add up to the image's total size.
+
+<img src="./assets/container-layers.webp" width=400>
+
+_A storage driver handles the details about the way these layers interact with each other._
+
+Container and layers
+
+The major difference between a container and an image is the top writable layer. All writes to the container that add new or modify existing data are stored in this writable layer. When the container is deleted, the writable layer is also deleted. The underlying image remains unchanged.
+
+Because each container has its own writable container layer, and all changes are stored in this container layer, multiple containers can share access to the same underlying image and yet have their own data state.
+
+**Manage data in Docker:**
+
+Ideally, very little data is written to a container's writable layer, and you use Docker volumes to write data. However, some workloads require you to be able to write to the container's writable layer. This is where storage drivers come in.
+
+Docker uses storage drivers to store image layers, and to store data in the writable layer of a container. Storage drivers are optimized for space efficiency, but (depending on the storage driver) write speeds are lower than native file system performance, especially for storage drivers that use a copy-on-write filesystem. Write-intensive applications, such as database storage, are impacted by a performance overhead.
+
+Use Docker volumes for write-intensive data, data that must persist beyond the container's lifespan, and data that must be shared between containers.
+
+**Copy-on-Write Mechanism:**
+
+- When a container is created from an image, it starts with the read-only layers of the image. On top of these read-only layers, Docker adds a thin read-write layer specific to that container.
+- If a process within the container tries to modify a file that exists in the read-only layers, Docker uses the CoW strategy. Instead of modifying the file directly in the read-only layer, it copies the file to the read-write layer and then makes the modification there-
+
+By default all files created inside a container are stored on a writable container layer. This means that:
+
+- The data doesn't persist when that container no longer exists, and it can be difficult to get the data out of the container if another process needs it.
+- A container's writable layer is tightly coupled to the host machine where the container is running. You can't easily move the data somewhere else.
+- Writing into a container's writable layer requires a storage driver to manage the filesystem. The storage driver provides a union filesystem, using the Linux kernel. This extra abstraction reduces performance as compared to using data volumes, which write directly to the host filesystem.
+
+Docker has two options for containers to store files on the host machine, so that the files are persisted even after the container stops: `volumes`, and `bind mounts`.
+
+Docker also supports containers storing files in-memory on the host machine. Such files are not persisted. If you're running Docker on Linux, tmpfs mount is used to store files in the host's system memory.
+
+1. Volumes ( _Recommended_ persisted storage )
+2. Bind mounts ( persisted storage )
+3. tmps mounts ( Just Linux in-memory )
+
+<img src="./assets/types-of-mounts-volume.webp" width=400>
+
+**Choose the right type of mount:**
+
+No matter which type of mount you choose to use, the data looks the same from within the container.
+
+**Volumes:**
+
+Volumes are created and managed by Docker. You can create a volume explicitly using the `docker volume create` command, or Docker can create a volume during container or service creation.
+
+When you create a volume, it's stored within a directory on the Docker host. When you mount the volume into a container, this directory is what's mounted into the container. This is similar to the way that bind mounts work, except that volumes are managed by Docker and are isolated from the core functionality of the host machine.
+
+A given volume can be mounted into multiple containers simultaneously. When no running container is using a volume, the volume is still available to Docker and isn't removed automatically. You can remove unused volumes using docker volume prune.
+
+Volumes also support the use of volume drivers, which allow you to store your data on remote hosts or cloud providers, among other possibilities.
+
+In addition, volumes are often a better choice than persisting data in a container's writable layer, because a volume doesn't increase the size of the containers using it, and the volume's contents exist outside the lifecycle of a given container.
+
+If your container generates non-persistent state data, consider using a `tmpfs mount` to avoid storing the data anywhere permanently, and to increase the container's performance by avoiding writing into the container's writable layer.
+
+**Bind mounts:**
+
+Bind mounts have limited functionality compared to volumes. When you use a bind mount, a file or directory on the host machine is mounted into a container. The file or directory is referenced by its full path on the host machine. The file or directory doesn't need to exist on the Docker host already. It is created on demand if it doesn't yet exist. Bind mounts are fast, but they rely on the host machine's filesystem having a specific directory structure available.
+
+This is how Docker provides DNS resolution to containers by default, by mounting `/etc/resolv.conf` from the host machine into each container.
+
+_Bind mounts allow write access to files on the host by default._
+
+_One side effect of using bind mounts is that you can change the host filesystem via processes running in a container, including creating, modifying, or deleting important system files or directories. This is a powerful ability which can have security implications, including impacting non-Docker processes on the host system._
+
+**tmpfs:**
+
+A tmpfs mount isn't persisted on disk, either on the Docker host or within a container. It can be used by a container during the lifetime of the container, to store non-persistent state or sensitive information. For instance, internally, Swarm services use tmpfs mounts to mount secrets into a service's containers.
