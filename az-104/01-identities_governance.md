@@ -25,6 +25,7 @@
     - [Role Assignment](#role-assignment)
   - [Create User and Group in Entra ID](#create-user-and-group-in-entra-id)
   - [Secure Resource with Azure RBAC](#secure-resource-with-azure-rbac)
+  - [Self-service Password reset (SSPR)](#self-service-password-reset-sspr)
 
 ## Manage Identities and Governance
 
@@ -433,4 +434,12 @@ The security-question method isn't available to accounts associated with an admi
 
 License requirements
 
-There are three editions of Microsoft Entra ID: free, Premium P1, and Premium P2. The password-reset functionality you can use depends on your edition.
+There are three editions of Microsoft Entra ID: _free_, _Premium P1_, and _Premium P2_. The password-reset functionality you can use depends on your edition.
+
+**How SSPR works:**
+
+1. _Localization_: The portal checks the browser's locale setting and renders the SSPR page in the appropriate language.
+2. _Verification_: The user enters their username and passes a captcha to ensure that it's a user and not a bot.
+3. _Authentication_: The user enters the required data to authenticate their identity. They might, for example, enter a code or answer security questions.
+4. _Password_ reset: If the user passes the authentication tests, they can enter a new password and confirm it.
+5. _Notification_: A message is sent to the user to confirm the reset.
