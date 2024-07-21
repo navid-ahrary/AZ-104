@@ -40,7 +40,7 @@ resource "azurerm_mssql_server" "server" {
 
   azuread_administrator {
     azuread_authentication_only = false
-    login_username              = "email@azure-tenant.com"
+    login_username              = "email@tenant-domain.com"
     object_id                   = "6e7d20ea-06bc-4899-aabf-5705a9156bb3"
     tenant_id                   = "c472f664-5454-4a2c-af74-0663a89ea4ee"
   }
