@@ -3,10 +3,8 @@ const { CosmosClient } = require('@azure/cosmos')
 const DATABASE_ID = "Certificates"
 const CONTAINER_ID = "Microsoft Azure"
 
-async function main() {
-    const endpoint = ""
-    const key = ""
-    const client = new CosmosClient({ endpoint, key })
+async function main() {    // const endpoint = ""
+    const client = new CosmosClient({ endpoint: '', key: '' })
     const db = await client.databases.createIfNotExists({
         id: DATABASE_ID,
         throughput: 400
