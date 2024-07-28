@@ -3,7 +3,7 @@ const fs = require('node:fs/promises');
 
 async function main() {
 
-    const client = BlobServiceClient.fromConnectionString('SharedAccessSignature=sv=2023-01-03&ss=btqf&srt=sco&st=2024-07-21T19%3A14%3A19Z&se=2024-07-22T19%3A14%3A19Z&sp=rwlc&sig=yIDnEtwClLuR34l52g9XUxqRkuV4uBZKVLUCEpVJ%2Ftg%3D;BlobEndpoint=https://peoplecount9ac7.blob.core.windows.net/;FileEndpoint=https://peoplecount9ac7.file.core.windows.net/;QueueEndpoint=https://peoplecount9ac7.queue.core.windows.net/;TableEndpoint=https://peoplecount9ac7.table.core.windows.net/;')
+    const client = BlobServiceClient.fromConnectionString('')
 
     // const c = await client.createContainer('test')
     // console.log(c.containerClient.url);
