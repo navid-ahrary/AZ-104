@@ -4,8 +4,8 @@ const DATABASE_ID = "Certificates"
 const CONTAINER_ID = "Microsoft Azure"
 
 async function main() {
-    const endpoint = "https://cos-wavecount.documents.azure.com:443/"
-    const key = "wZivVBOWpyYnIYiqtPcm9ZndLddA11ZYX88ATTviY6zs6WjqSu3RWp5AmK28P1mP172tv4fUYSJGACDbUU9lhg=="
+    const endpoint = ""
+    const key = ""
     const client = new CosmosClient({ endpoint, key })
     const db = await client.databases.createIfNotExists({
         id: DATABASE_ID,
