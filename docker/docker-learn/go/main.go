@@ -13,15 +13,17 @@ type Response struct {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	log.Info("Received request for /hello")
+	log.Info("Received request for /")
 	resp := Response{Message: "Hello Docker"}
+
 	w.Header().Set("Content-Type", "application/json")
+
 	json.NewEncoder(w).Encode(resp)
 }
 
 func main() {
 	log.Info("Starting server on :8080")
 	r := mux.NewRouter()
-	r.HandleFunc("/hello", helloHandler).Methods("GET")
-	http.ListenAndServe(":8080", nil)
+	r.HandleFunc("/", helloHandler).Methods("GET")
+	http.ListenAndServe(":8080", r)
 }
