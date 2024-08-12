@@ -236,3 +236,84 @@ The authentication flow is the same for all providers, but differs depending on 
 
 - Without provider SDK (server-directed flow or server flow): The application delegates federated sign-in to Container Apps. Delegation is typically the case with browser apps, which presents the provider's sign-in page to the user.
 - With provider SDK (client-directed flow or client flow): The application signs users in to the provider manually and then submits the authentication token to Container Apps for validation. This approach is typical for browser-less apps that don't present the provider's sign-in page to the user. An example is a native mobile app that signs users in using the provider's SDK.
+
+### Updating your container app
+
+```
+az containerapp update \
+  --name <APPLICATION_NAME> \
+  --resource-group <RESOURCE_GROUP_NAME> \
+  --image <IMAGE_NAME>
+```
+
+```
+az containerapp revision list \
+  --name <APPLICATION_NAME> \
+  --resource-group <RESOURCE_GROUP_NAME> \
+  -o table
+```
+
+### Manage secrets in Azure Container Apps
+
+Azure Container Apps allows your application to securely store sensitive configuration values. Once secrets are defined at the application level, secured values are available to container apps. Specifically, you can reference secured values inside scale rules.
+
+- Secrets are scoped to an application, outside of any specific revision of an application.
+- Adding, removing, or changing secrets doesn't generate new revisions.
+- Each application revision can reference one or more secrets.
+- Multiple revisions can reference the same secrets.
+
+An updated or deleted secret doesn't automatically affect existing revisions in your app. When a secret is updated or deleted, you can respond to changes in one of two ways:
+
+- Deploy a new revision.
+- Restart an existing revision.
+
+Before you delete a secret, deploy a new revision that no longer references the old secret. Then deactivate all revisions that reference the secret.
+
+_Note:_
+Container Apps doesn't support Azure Key Vault integration. Instead, enable managed identity in the container app and use the Key Vault SDK in your app to access secrets.
+
+```
+az containerapp create \
+  --resource-group "my-resource-group" \
+  --name queuereader \
+  --environment "my-environment-name" \
+  --image demos/queuereader:v1 \
+  --secrets "queue-connection-string=$CONNECTION_STRING"
+```
+
+After declaring secrets at the application level, you can reference them in environment variables when you create a new revision in your container app.
+When an environment variable references a secret, its value is populated with the value defined in the secret. To reference a secret in an environment variable in the Azure CLI, set its value to secretref:, followed by the name of the secret.
+
+```
+az containerapp create \
+  --resource-group "my-resource-group" \
+  --name myQueueApp \
+  --environment "my-environment-name" \
+  --image demos/myQueueApp:v1 \
+  --secrets "queue-connection-string=$CONNECTIONSTRING" \
+  --env-vars "QueueName=myqueue" "ConnectionString=secretref:queue-connection-string"
+```
+
+### Dapr integration with Azure Container Apps
+
+Dapr core concepts:
+
+![alt text](https://learn.microsoft.com/en-us/training/wwl-azure/implement-azure-container-apps/media/distributed-application-runtime-container-apps.png)
+
+| Label | Dapr                             | settings                                                                                                                                                                                                                                                                     | Description |
+| ----- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 1.    | Container Apps with Dapr enabled | Dapr is enabled at the container app level by configuring a set of Dapr arguments. These values apply to all revisions of a given container app when running in multiple revisions mode.                                                                                     |
+| 2.    | Dapr                             | The fully managed Dapr APIs are exposed to each container app through a Dapr sidecar. The Dapr APIs can be invoked from your container app via HTTP or gRPC. The Dapr sidecar runs on HTTP port 3500 and gRPC port 50001.                                                    |
+| 3.    | Dapr component configuration     | Dapr uses a modular design where functionality is delivered as a component. Dapr components can be shared across multiple container apps. The Dapr app identifiers provided in the scopes array dictate which dapr-enabled container apps load a given component at runtime. |
+
+#### Dapr components and scopes:
+
+Dapr uses a modular design where functionality is delivered as a component. The use of Dapr components is optional and dictated exclusively by the needs of your application.
+
+Dapr components in container apps are environment-level resources that:
+
+- Can provide a pluggable abstraction model for connecting to supporting external services.
+- Can be shared across container apps or scoped to specific container apps.
+- Can use Dapr secrets to securely retrieve configuration metadata.
+
+By default, all Dapr-enabled container apps within the same environment load the full set of deployed components. To ensure components are loaded at runtime by only the appropriate container apps, application scopes should be used.

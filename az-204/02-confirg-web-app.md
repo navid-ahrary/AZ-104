@@ -1,6 +1,6 @@
 ## View outbound ips
 
-`az webapp show --resource-group <> --name <> --query outboundIpAddresses|possibleOutboundIpAddresses --output tsv`
+`az webapp show --resource-group <group-name> --name <app-name> --query outboundIpAddresses|possibleOutboundIpAddresses --output tsv`
 
 ## Adding app settings with az cli
 
