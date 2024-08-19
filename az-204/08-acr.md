@@ -317,3 +317,6 @@ Dapr components in container apps are environment-level resources that:
 - Can use Dapr secrets to securely retrieve configuration metadata.
 
 By default, all Dapr-enabled container apps within the same environment load the full set of deployed components. To ensure components are loaded at runtime by only the appropriate container apps, application scopes should be used.
+
+Compare ACA vs AKS:
+https://techcommunity.microsoft.com/t5/startups-at-microsoft/aca-vs-aks-which-azure-service-is-better-for-running-containers/ba-p/3815164

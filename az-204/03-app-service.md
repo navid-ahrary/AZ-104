@@ -50,3 +50,5 @@ If the average CPU% across instances goes to 80, autoscale scales out adding a t
 Now assume that over time the CPU% falls to 60.
 Autoscale's scale-in rule estimates the final state if it were to scale-in. For example, 60 x 3 (current instance count) = 180 / 2 (final number of instances when scaled in) = 90. So autoscale doesn't scale-in because it would have to scale out again immediately. Instead, it skips scaling in.
 The next time autoscale checks, the CPU continues to fall to 50. It estimates again - 50 x 3 instance = 150 / 2 instances = 75, which is below the scale-out threshold of 80, so it scales in successfully to 2 instances.
+
+https://learn.microsoft.com/en-us/answers/questions/525145/what-is-flapping-in-app-service-autoscale
