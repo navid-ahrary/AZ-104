@@ -36,3 +36,41 @@ Azure Key Vault has two service tiers: Standard, which encrypts with a software 
 
 - Simplified administration of application secrets:
   - Automating certain tasks on certificates that you purchase from Public CAs, such as enrollment and renewal.
+
+## Authentication:
+
+To do any operations with Key Vault, you first need to authenticate to it. There are three ways to authenticate to Key Vault:
+
+- Managed identities for Azure resources: When you deploy an app on a virtual machine in Azure, you can assign an identity to your virtual machine that has access to Key Vault. You can also assign identities to other Azure resources. The benefit of this approach is that the app or service isn't managing the rotation of the first secret. Azure automatically rotates the service principal client secret associated with the identity. We recommend this approach as a best practice.
+- Service principal and certificate: You can use a service principal and an associated certificate that has access to Key Vault. We don't recommend this approach because the application owner or developer must rotate the certificate.
+- Service principal and secret: Although you can use a service principal and a secret to authenticate to Key Vault, we don't recommend it. It's hard to automatically rotate the bootstrap secret that's used to authenticate to Key Vault.
+
+## Azure Key Vault best practices
+
+- Use separate key vaults: Recommended using a vault per application per environment (Development, Pre-Production and Production). This pattern helps you not share secrets across environments and also reduces the threat if there is a breach.
+- Control access to your vault
+- Recovery options: Turn on soft-delete
+- Logging
+- Backup: Create regular back ups of your vault on update/delete/create of objects within a Vault.
+
+Authentication best practices
+
+We recommend that you use a managed identity for applications deployed to Azure. If you use Azure services that don't support managed identities or if applications are deployed on-premises, a service principal with a certificate is a possible alternative. In that scenario, the certificate should be stored in Key Vault and frequently rotated.
+
+Use a service principal with a secret for development and testing environments. Use a user principal for local development and Azure Cloud Shell.
+
+We recommend these security principals in each environment:
+
+- Production environment: Managed identity or service principal with a certificate.
+- Test and development environments: Managed identity, service principal with certificate, or service principal with a secret.
+- Local development: User principal or service principal with a secret.
+
+https://learn.microsoft.com/en-us/azure/key-vault/general/developers-guide
+
+When to use @azure/identity
+
+The credential classes exposed by @azure/identity are focused on providing the most straightforward way to authenticate the Azure SDK clients locally, in your development environments, and in production.
+
+Application requests to most Azure services must be authorized. Using the _DefaultAzureCredential_ method provided by the **Azure Identity client library** is the recommended approach for implementing passwordless connections to Azure services in your code. _DefaultAzureCredential_ supports multiple authentication methods and determines which method should be used at runtime. This approach enables your app to use different authentication methods in different environments (local vs. production) without implementing environment-specific code.
+
+In this quickstart, _DefaultAzureCredential_ authenticates to key vault using the credentials of the local development user logged into the Azure CLI. When the application is deployed to Azure, the same _DefaultAzureCredential_ code can automatically discover and use a managed identity that is assigned to an App Service, Virtual Machine, or other services. For more information, see Managed Identity Overview.
