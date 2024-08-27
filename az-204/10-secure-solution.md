@@ -74,3 +74,34 @@ The credential classes exposed by @azure/identity are focused on providing the m
 Application requests to most Azure services must be authorized. Using the _DefaultAzureCredential_ method provided by the **Azure Identity client library** is the recommended approach for implementing passwordless connections to Azure services in your code. _DefaultAzureCredential_ supports multiple authentication methods and determines which method should be used at runtime. This approach enables your app to use different authentication methods in different environments (local vs. production) without implementing environment-specific code.
 
 In this quickstart, _DefaultAzureCredential_ authenticates to key vault using the credentials of the local development user logged into the Azure CLI. When the application is deployed to Azure, the same _DefaultAzureCredential_ code can automatically discover and use a managed identity that is assigned to an App Service, Virtual Machine, or other services. For more information, see Managed Identity Overview.
+
+- By default, when you create a new Azure Key Vault, no users (including the creator) have permissions to access or manage the secrets, keys, or certificates stored within it. This is a security measure to ensure that only explicitly granted users or applications can access the sensitive data.
+
+```
+ az role assignment create --role "Key Vault Secrets Officer" --assignee <user-objectId $(az ad signed-in-user show --query id -o tsv) $(az ad user show  --id email@example.tld --query id -o tsv)> --scope $(az keyvault show --name kv-frc-demo -g rg-demo --query id -o tsv)
+```
+
+```
+import { DefaultAzureCredential } from "@azure/identity";
+import { SecretClient } from "@azure/keyvault-secrets";
+import { KeyClient } from "@azure/keyvault-keys";
+
+const credential = new DefaultAzureCredential();
+const client = new SecretClient(
+  "https://kv-frc-demo.vault.azure.net/",
+  credential
+);
+
+async function run() {
+  const poll = await client.beginRecoverDeletedSecret("key-01");
+  await poll.pollUntilDone();
+  const saved = await client.setSecret("key-01", "navid");
+  console.log(saved);
+
+  const deletePoller = await client.beginDeleteSecret("key-01");
+  await deletePoller.pollUntilDone();
+  await client.purgeDeletedSecret("key-01");
+}
+
+run();
+```
