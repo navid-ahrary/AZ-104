@@ -4,7 +4,7 @@ The Azure Key Vault service supports two types of containers: vaults and managed
 
 Azure Key Vault helps solve the following problems:
 
-https://learn.microsoft.com/en-us/azure/key-vault/general/security-features
+<https://learn.microsoft.com/en-us/azure/key-vault/general/security-features>
 
 - Secrets Management: Azure Key Vault can be used to Securely store and tightly control access to tokens, passwords, certificates, API keys, and other secrets
 - Key Management: Azure Key Vault can also be used as a Key Management solution. Azure Key Vault makes it easy to create and control the encryption keys used to encrypt your data.
@@ -12,11 +12,11 @@ https://learn.microsoft.com/en-us/azure/key-vault/general/security-features
 
 Azure Key Vault has two service tiers: Standard, which encrypts with a software key, and a Premium tier, which includes hardware security module(HSM)-protected keys, Azure Key Vaults may be either software-protected or, with the Azure Key Vault Premium tier, hardware-protected by hardware security modules (HSMs).
 
-## Some security tips:
+## Some security tips
 
 - You can reduce the exposure of your vaults by specifying which IP addresses have access to them. The virtual network service endpoints for Azure Key Vault allow you to restrict access to a specified virtual network. After firewall rules are in effect, users can only read data from Key Vault when their requests originate from allowed virtual networks or IPv4 address ranges.
 
-## Benefits:
+## Benefits
 
 - Centralized application secrets: Your applications can securely access the information they need by using URIs. These URIs allow the applications to retrieve specific versions of a secret.
 - Securely store secrets and keys (Access model):
@@ -37,7 +37,7 @@ Azure Key Vault has two service tiers: Standard, which encrypts with a software 
 - Simplified administration of application secrets:
   - Automating certain tasks on certificates that you purchase from Public CAs, such as enrollment and renewal.
 
-## Authentication:
+## Authentication
 
 To do any operations with Key Vault, you first need to authenticate to it. There are three ways to authenticate to Key Vault:
 
@@ -65,7 +65,7 @@ We recommend these security principals in each environment:
 - Test and development environments: Managed identity, service principal with certificate, or service principal with a secret.
 - Local development: User principal or service principal with a secret.
 
-https://learn.microsoft.com/en-us/azure/key-vault/general/developers-guide
+<https://learn.microsoft.com/en-us/azure/key-vault/general/developers-guide>
 
 When to use **@azure/identity**:
 
@@ -77,11 +77,11 @@ In this quickstart, _DefaultAzureCredential_ authenticates to key vault using th
 
 - By default, when you create a new Azure Key Vault, no users (including the creator) have permissions to access or manage the secrets, keys, or certificates stored within it. This is a security measure to ensure that only explicitly granted users or applications can access the sensitive data.
 
-```
+``` Bash
  az role assignment create --role "Key Vault Secrets Officer" --assignee <user-objectId $(az ad signed-in-user show --query id -o tsv) $(az ad user show  --id email@example.tld --query id -o tsv)> --scope $(az keyvault show --name kv-frc-demo -g rg-demo --query id -o tsv)
 ```
 
-```
+``` TypeScript
 import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 import { KeyClient } from "@azure/keyvault-keys";
@@ -125,7 +125,7 @@ How a system-assigned managed identity works with an Azure virtual machine
 
 4. After the virtual machine has an identity, use the service principal information to grant the virtual machine access to Azure resources. To call Azure Resource Manager, use role-based access control in Microsoft Entra ID to assign the appropriate role to the virtual machine service principal. To call Key Vault, grant your code access to the specific secret or key in Key Vault.
 
-5. Your code that's running on the virtual machine can request a token from the Azure Instance Metadata service endpoint, accessible only from within the virtual machine: http://169.254.169.254/metadata/identity/oauth2/token
+5. Your code that's running on the virtual machine can request a token from the Azure Instance Metadata service endpoint, accessible only from within the virtual machine: <http://169.254.169.254/metadata/identity/oauth2/token>
 
 6. A call is made to Microsoft Entra ID to request an access token (as specified in step 5) by using the client ID and certificate configured in step 3. Microsoft Entra ID returns a JSON Web Token (JWT) access token.
 
