@@ -71,17 +71,26 @@ When to use **@azure/identity**:
 
 The credential classes exposed by **@azure/identity** are focused on providing the most straightforward way to authenticate the Azure SDK clients locally, in your development environments, and in production.
 
-Application requests to most Azure services must be authorized. Using the _DefaultAzureCredential_ method provided by the **Azure Identity client library** is the recommended approach for implementing passwordless connections to Azure services in your code. _DefaultAzureCredential_ supports multiple authentication methods and determines which method should be used at runtime. This approach enables your app to use different authentication methods in different environments (local vs. production) without implementing environment-specific code.
+Application requests to most Azure services must be authorized. Using the _DefaultAzureCredential_ method provided by the **Azure Identity client library** is the recommended approach for implementing passwordless connections to Azure services in your code. _DefaultAzureCredential_ supports multiple authentication methods and determines which method should be used at runtime. This approach enables your app to use different authentication methods in different environments (local vs. production) without implementing environment-specific code. DefaultAzureCredential automatically attempts to authenticate via multiple mechanisms, including environment variables or an interactive sign-in.
 
 In this quickstart, _DefaultAzureCredential_ authenticates to key vault using the credentials of the local development user logged into the Azure CLI. When the application is deployed to Azure, the same _DefaultAzureCredential_ code can automatically discover and use a managed identity that is assigned to an App Service, Virtual Machine, or other services. For more information, see Managed Identity Overview.
 
+The DefaultAzureCredential attempts to authenticate via the following mechanisms, in this order, stopping when one succeeds:
+
+- Environment - The DefaultAzureCredential reads account information specified via environment variables and use it to authenticate.
+- Managed Identity - If the application is deployed to an Azure host with Managed Identity enabled, the DefaultAzureCredential authenticates with that account.
+- Visual Studio - If the developer authenticated via Visual Studio, the DefaultAzureCredential authenticates with that account.
+- Azure CLI - If the developer authenticated an account via the Azure CLI az login command, the DefaultAzureCredential authenticates with that account. Visual Studio Code users can authenticate their development environment using the Azure CLI.
+- Azure PowerShell - If the developer authenticated an account via the Azure PowerShell Connect-AzAccount command, the DefaultAzureCredential authenticates with that account.
+- Interactive browser - If enabled, the DefaultAzureCredential interactively authenticates the developer via the current system's default browser. By default, this credential type is disabled.
+
 - By default, when you create a new Azure Key Vault, no users (including the creator) have permissions to access or manage the secrets, keys, or certificates stored within it. This is a security measure to ensure that only explicitly granted users or applications can access the sensitive data.
 
-``` Bash
+```Bash
  az role assignment create --role "Key Vault Secrets Officer" --assignee <user-objectId $(az ad signed-in-user show --query id -o tsv) $(az ad user show  --id email@example.tld --query id -o tsv)> --scope $(az keyvault show --name kv-frc-demo -g rg-demo --query id -o tsv)
 ```
 
-``` TypeScript
+```TypeScript
 import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 import { KeyClient } from "@azure/keyvault-keys";
@@ -130,3 +139,60 @@ How a system-assigned managed identity works with an Azure virtual machine
 6. A call is made to Microsoft Entra ID to request an access token (as specified in step 5) by using the client ID and certificate configured in step 3. Microsoft Entra ID returns a JSON Web Token (JWT) access token.
 
 7. Your code sends the access token on a call to a service that supports Microsoft Entra authentication.
+
+### Configure managed identities In Vm
+
+```Bash
+az vm create --resource-group myResourceGroup \ 
+    --name myVM --image win2016datacenter \ 
+    --generate-ssh-keys \ 
+    --assign-identity \ 
+    --role contributor \
+    --scope mySubscription \
+    --admin-username azureuser \ 
+    --admin-password myPassword12
+```
+
+```Bash
+az vm identity assign -g myResourceGroup -n myVm
+```
+
+```Bash
+az identity create -g myResourceGroup -n myUserAssignedIdentity
+```
+
+``` Bash
+az vm create \
+--resource-group <RESOURCE GROUP> \
+--name <VM NAME> \
+--image Ubuntu2204 \
+--admin-username <USER NAME> \
+--admin-password <PASSWORD> \
+--assign-identity <USER ASSIGNED IDENTITY NAME> \
+--role <ROLE> \
+--scope <SUBSCRIPTION>
+```
+
+```Bash
+az vm identity assign \
+    -g <RESOURCE GROUP> \
+    -n <VM NAME> \
+    --identities <USER ASSIGNED IDENTITY>
+```
+
+### Specify a user-assigned managed identity with DefaultAzureCredential
+
+```csharp
+string userAssignedClientId = "<your managed identity client Id>";
+var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
+```
+
+### Define a custom authentication flow with ChainedTokenCredential
+
+While the _DefaultAzureCredential_ is generally the quickest way to get started developing applications for Azure, more advanced users may want to customize the credentials considered when authenticating. The _ChainedTokenCredential_ enables users to combine multiple credential instances to define a customized chain of credentials. This example demonstrates creating a ChainedTokenCredential which attempts to authenticate using managed identity, and fall back to authenticating via the Azure CLI if managed identity is unavailable in the current environment.
+
+```csharp
+var credential = new ChainedTokenCredential(new ManagedIdentityCredential(), new AzureCliCredential());
+```
+
+## Azure App Configuration
