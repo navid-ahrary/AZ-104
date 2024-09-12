@@ -39,7 +39,7 @@ Azure Cosmos DB offers five well-defined levels of consistency. From strongest t
 - Consistent prefix
 - Eventual
 
-![](./assets/five-consistency-levels.png)
+![img](./assets/five-consistency-levels.png)
 
 The consistency levels are region-agnostic and are guaranteed for all operations, regardless of:
 
@@ -50,7 +50,7 @@ The consistency levels are region-agnostic and are guaranteed for all operations
 ## Configure the default consistency level
 
 You can configure the default consistency level on your Azure Cosmos DB account at any time. The default consistency level configured on your account applies to all Azure Cosmos DB databases and containers under that account. All reads and queries issued against a container or a database use the specified consistency level by default.
-https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels
+<https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels>
 
 ## Explore supported APIs
 
@@ -63,7 +63,7 @@ These APIs are best suited if the following conditions are true:
 - If you don't want to rewrite your entire data access layer
 - If you want to use the open-source developer ecosystem, client-drivers, expertise, and resources for your database
 
-## API for NOSQL:
+## API for NOSQL
 
 Any new feature that is rolled out to Azure Cosmos DB is first available on API for NoSQL accounts. NoSQL accounts provide support for querying items using the Structured Query Language (SQL) syntax.
 
@@ -72,7 +72,7 @@ Any new feature that is rolled out to Azure Cosmos DB is first available on API 
 The Azure Cosmos DB API for Table stores data in key/value format.
 API for Table only supports OLTP scenarios.
 
-## Unit request:
+## Unit request
 
 With Azure Cosmos DB, you pay for the throughput you provision and the storage you consume on an hourly basis.
 
@@ -119,6 +119,6 @@ Azure recommends to use _Push model_, but in some scenario we might want the ext
 - Controlling the pace at which your client receives changes for processing
 - Doing a one-time read of the existing data in the change feed (for example, to do a data migration)
 
-## Reading change feed with a push model:
+## Reading change feed with a push model
 
 There are two ways you can read from the change feed with a push model: Azure Functions Azure Cosmos DB triggers, and the change feed processor library (.Net and Java). Azure Functions uses the change feed processor behind the scenes, so these are both similar ways to read the change feed.

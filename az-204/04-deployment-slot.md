@@ -1,4 +1,4 @@
-## Slot
+# Slot
 
 The **Standard**, **Premium**, and **Isolated** App Service plan tiers support deployment to a specified deployment slot instead of the default production slot.
 

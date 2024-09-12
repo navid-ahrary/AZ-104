@@ -6,7 +6,7 @@ In this module you learned how to:
 - Create and implement a lifecycle policy.
 - Rehydrate blob data stored in an archive tier.
 
-## Types of storage accounts:
+## Types of storage accounts
 
 Azure Storage offers two performance levels of storage accounts, standard and premium.
 
@@ -35,7 +35,7 @@ Data in a new storage account is encrypted with Microsoft-managed keys by defaul
 - You can specify a customer-managed key to use for encrypting and decrypting data in Blob Storage and in Azure Files.Customer-managed keys must be stored in Azure Key Vault or Azure Key Vault Managed Hardware Security Model (HSM).
 - You can specify a customer-provided key on Blob Storage operations. A client can include an encryption key on a read/write request for granular control over how blob data is encrypted and decrypted. We can use it for our applicatin customer to store each customer files with their encryption key.
 
-## Policy:
+## Policy
 
 ```
 {

@@ -2,19 +2,19 @@
 
 ## Install the latest version Azure Cli with pip
 
-```
+```azurecli
 pip3 install --upgrade azure-cli
 ```
 
 ## Login
 
-```
+```azurecli
  az login
 ```
 
 ## Add conatiner app extension to azure cli
 
-```
+```azurecli
 az extension add --name containerapp --upgrade
 
 az provider register --namespace Microsoft.App
@@ -22,7 +22,7 @@ az provider register --namespace Microsoft.App
 
 ## Create resource group
 
-```
+```azurecli
 export RGNAME="rg-myapp-frc-dev"
 
 export LOCATION="francecentral"
@@ -31,9 +31,9 @@ az group create --name "$RGNAME" \
     --location "$LOCATION"
 ```
 
-## Create Container Registry (ACR):
+## Create Container Registry (ACR)
 
-```
+```azurecli
 export ACRNAME="acr-myapp-frc-dev-01"
 
 az acr create --resource-group "$RGNAME" \
@@ -42,7 +42,7 @@ az acr create --resource-group "$RGNAME" \
 
 ## Create Image and Upload to Registry
 
-```
+```azurecli
 echo 'FROM golang:1.22.6-alpine' > Dockerfile
 echo 'ENTRYPOINT ["go", "version"]' >> Dockerfile
 
@@ -53,7 +53,7 @@ az acr build --image sample/hello-world:latest  \
 
 ## Create Service Principal for pull access on ACR:
 
-```
+```azurecli
 az ad sp create-for-rbac \
     --name acr-pull
     --role acrpull
@@ -62,7 +62,7 @@ az ad sp create-for-rbac \
 
 ## Create Azure Key Vault to store service pricipals securely
 
-```
+```azurecli
 export KVNAME="kv-myapp-frc-dev-01"
 
 az keyvault create --resource-group "$RGNAME" \

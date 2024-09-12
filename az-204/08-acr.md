@@ -1,6 +1,6 @@
 # Azure Container Registry
 
-## tiers:
+## tiers
 
 Just different in storage and image throughput
 
@@ -13,7 +13,7 @@ Features:
 - Geo-replication: For scenarios requiring high-availability assurance, consider using the geo-replication feature of **Premium** registries. Geo-replication helps guard against losing access to your registry in a regional failure event. Geo-replication provides other benefits, too, like network-close image storage for faster pushes and pulls in distributed development or deployment scenarios.
 - Zone redundancy: A feature of the **Premium** service tier, zone redundancy uses Azure availability zones to replicate your registry to a minimum of three separate zones in each enabled region.
 
-## Azure Container Instances:
+## Azure Container Instances
 
 ![alt text](https://learn.microsoft.com/en-us/training/wwl-azure/create-run-container-images-azure-container-instances/media/container-groups-example.png)
 
@@ -61,11 +61,11 @@ az ad sp create-for-rbac \
 az container create --resource-group az-204-rg --name aci-demo --image wavecountcontainerregistry01.azurecr.io/go-sample:latest  --dns-name-label aci-demo-$RANDOM --port 8080 --registry-username $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-usr --query value -o tsv) --registry-password $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-pwd --query value -o tsv) --dns-name-label aci-demo-$RANDOM --query ipAddress.fqdn --restart-policy onFailure --environment-variables 'password'='Pa55word'
 ```
 
-### Mount an Azure file share in Azure Container Instances:
+### Mount an Azure file share in Azure Container Instances
 
 By default, Azure Container Instances are stateless. If the container crashes or stops, all of its state is lost. To persist state beyond the lifetime of the container, you must mount a volume from an external store. As shown in this unit, Azure Container Instances can mount an Azure file share created with Azure Files. Azure Files offers fully managed file shares in the cloud that are accessible via the industry standard Server Message Block (SMB) protocol. Using an Azure file share with Azure Container Instances provides file-sharing features similar to using an Azure file share with Azure virtual machines.
 
-## Azure Container Apps:
+## Azure Container Apps
 
 Azure Container Apps enables you to run microservices and containerized applications on a serverless platform that runs on top of Azure Kubernetes Service. Common uses of Azure Container Apps include:
 
@@ -74,11 +74,11 @@ Azure Container Apps enables you to run microservices and containerized applicat
 - Handling event-driven processing
 - Running microservices
 
-### Azure Container Apps environments:
+### Azure Container Apps environments
 
 Individual container apps are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps. Container Apps in the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace. You might provide an existing virtual network when you create an environment.
 
-### Reasons to deploy container apps to the same environment include situations when you need to:
+### Reasons to deploy container apps to the same environment include situations when you need to
 
 - Manage related services
 - Deploy different applications to the same virtual network
@@ -86,7 +86,7 @@ Individual container apps are deployed to a single Container Apps environment, w
 - Have applications to share the same Dapr configuration
 - Have applications share the same log analytics workspace
 
-### Reasons to deploy container apps to different environments include situations when you want to ensure:
+### Reasons to deploy container apps to different environments include situations when you want to ensure
 
 - Two applications never share the same compute resources
 - Two Dapr applications can't communicate via the Dapr service invocation API
@@ -115,7 +115,7 @@ Container App:
 az containerapp create -n my-container-app -g $myRG  --environment $myAppContEnv --image wavecountcontainerregistry01.azurecr.io/go-sample:latest  --registry-server  wavecountcontainerregistry01.azurecr.io   --target-port 8080 --ingress external  --query properties.configurations.ingress.fqdn
 ```
 
-### Features:
+### Features
 
 Configurations:
 
@@ -196,7 +196,7 @@ Azure Container Apps has the following limitations:
 - Privileged containers: Azure Container Apps can't run privileged containers. If your program attempts to run a process that requires root access, the application inside the container experiences a runtime error.
 - Operating system: Linux-based (linux/amd64) container images are required.
 
-### Implement authentication and authorization in Azure Container Apps:
+### Implement authentication and authorization in Azure Container Apps
 
 This feature should only be used with HTTPS. Ensure allowInsecure is disabled on your container app's ingress configuration. You can configure your container app for authentication with or without restricting access to your site content and APIs.
 
@@ -306,7 +306,7 @@ Dapr core concepts:
 | 2.    | Dapr                             | The fully managed Dapr APIs are exposed to each container app through a Dapr sidecar. The Dapr APIs can be invoked from your container app via HTTP or gRPC. The Dapr sidecar runs on HTTP port 3500 and gRPC port 50001.                                                    |
 | 3.    | Dapr component configuration     | Dapr uses a modular design where functionality is delivered as a component. Dapr components can be shared across multiple container apps. The Dapr app identifiers provided in the scopes array dictate which dapr-enabled container apps load a given component at runtime. |
 
-#### Dapr components and scopes:
+#### Dapr components and scopes
 
 Dapr uses a modular design where functionality is delivered as a component. The use of Dapr components is optional and dictated exclusively by the needs of your application.
 
@@ -319,4 +319,4 @@ Dapr components in container apps are environment-level resources that:
 By default, all Dapr-enabled container apps within the same environment load the full set of deployed components. To ensure components are loaded at runtime by only the appropriate container apps, application scopes should be used.
 
 Compare ACA vs AKS:
-https://techcommunity.microsoft.com/t5/startups-at-microsoft/aca-vs-aks-which-azure-service-is-better-for-running-containers/ba-p/3815164
+<https://techcommunity.microsoft.com/t5/startups-at-microsoft/aca-vs-aks-which-azure-service-is-better-for-running-containers/ba-p/3815164>
