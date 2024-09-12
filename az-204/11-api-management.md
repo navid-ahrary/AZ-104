@@ -31,11 +31,15 @@ These properties are not mutually exclusive and they can be mixed together to fo
 
 The Consumption tier in API Management is designed to conform with serverless design principals. If you build your APIs from serverless technologies, such as Azure Functions, this tier is a good fit. In the Consumption tier, you must explicitly enable the use of client certificates, which you can do on the Custom domains page. This step is not necessary in other tiers.
 
+![img](./assets/5-config-request-certificates.png)
+
 ## Certificate Authorization Policies
 
 Check the thumbprint of a client certificate
 
 Every client certificate includes a thumbprint, which is a hash, calculated from other certificate properties. The thumbprint ensures that the values in the certificate have not been altered since the certificate was issued by the certificate authority.
+
+Create these policies in the inbound processing policy file within the API Management gateway.
 
 ```xml
 <choose>
@@ -76,8 +80,140 @@ Check the issuer and subject of a client certificate:
 ```azurecli
 az apim create -n $myApiName \
     --location $myLocation \
-    --publisher-email $myEmail  \
+    --publisher-email developer@matryx.io  \
     --resource-group az204-apim-rg \
-    --publisher-name AZ204-APIM-Exercise \
+    --publisher-name Matryx-Developers \
     --sku-name Consumption
 ```
+
+## Policies
+
+__NOTE__:
+If the request contains `Authorization` header, the cache policy doesn't work.
+
+### Caching Policy
+
+```xml
+<policies>
+    <inbound>
+        <base />
+        <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" downstream-caching-type="none" must-revalidate="true" caching-type="internal" />
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <cache-store duration="60" />
+        <base />
+    </outbound>
+    </on-error>
+        <base />
+    </on-error>
+</policies>
+```
+
+#### By Value
+
+```xml
+<policies>
+    <inbound>
+        <cache-lookup-value key="12345"
+            default-value="$0.00"
+            variable-name="boardPrice"
+            caching-type="internal" />
+        <base />
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <cache-store-value key="12345"
+            value="$3.60"
+            duration="3600"
+            caching-type="internal" />
+        <base />
+    </outbound>
+    </on-error>
+        <base />
+    </on-error>
+</policies>
+```
+
+### Use vary-by tags
+
+It's important to ensure that, if you serve a response from the cache, it's relevant to the original request. However, you also want to use the cache as much as possible. Suppose, for example, that the board games Stock Management API received a GET request to the following URL and cached the result:
+
+http://<boardgames.domain>/stock/api/product?partnumber=3416&customerid=1128
+
+This request is intended to check the stock levels for a product with part number 3416. The customer ID is used by a separate policy, and doesn't alter the response. Subsequent requests for the same part number can be served from the cache, as long as the record hasn't expired. So far, so good.
+
+Now suppose that a different customer requests the same product:
+
+http://<boardgames.domain>/stock/api/product?partnumber=3416&customerid=5238
+
+By default, the response can't be served from the cache, because the customer ID is different.
+
+However, the developers point out that the customer ID doesn't alter the response. It would be more efficient if requests for the same product from different customers could be returned from the cache. Customers would still see the correct information.
+
+To modify this default behavior, use the vary-by-query-parameter element within the `<cache-lookup>` policy:
+
+```xml
+<policies>
+    <inbound>
+        <base />
+        <cache-lookup vary-by-developer="false" vary-by-developer-groups="false" downstream-caching-type="none" must-revalidate="true" caching-type="internal">
+            <vary-by-query-parameter>partnumber</vary-by-query-parameter>
+        </cache-lookup>
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <cache-store duration="60" />
+        <base />
+    </outbound>
+    </on-error>
+        <base />
+    </on-error>
+</policies>
+```
+
+By default, Azure API Management doesn't examine HTTP headers to determine whether a cached response is suitable for a given request. If a header can make a significant difference to a response, use the `<vary-by-header>` tag. Work with your developer team to understand how each API uses query parameters and headers so you can decide which vary-by tags to use in your policy.
+
+Within the `<cache-lookup>` tag, there's also the vary-by-developer attribute, which is required and set to false by default. When this attribute is set to true, API Management examines the subscription key supplied with each request. It serves a response from the cache only if the original request had the same subscription key. Set this attribute to true when each user should see a different response for the same URL. If each user group should see a different response for the same URL, set the vary-by-developer-group attribute to true.
+
+### Use an external cache
+
+API Management instances usually have an internal cache, which is used to store prepared responses to requests. However, if you prefer, you can use a Redis-compatible external cache instead. One possible external cache system that you can use is the __Azure Cache for Redis service__.
+
+You might choose to use an external cache because:
+
+- You want to avoid the cache being cleared when the API Management service is updated.
+- You want to have greater control over the cache configuration than the internal cache allows.
+- You want to cache more data than can be stored in the internal cache.
+- Avoid having your cache periodically cleared during API Management updates
+- Have more control over your cache configuration
+- Enable caching in the API Management self-hosted gateway
+- Use caching with the Consumption tier of API Management:
+    Another reason to configure an external cache is that you want to use caching with the Consumption pricing tier. This tier follows serverless design principles (stateless), and you should use it with serverless web APIs. For this reason, it has no internal cache. If you want to use caching with an API Management instance in the Consumption tier, you must use an external cache.
+
+Consumption tier for API Management:  Azure configures API Management instances for this tier in just a minute or so. Other tiers can take up to 30 minutes or longer.
+
+### Some examples
+
+```xml
+<outbount>
+    <set-header-name name='x-powerred-by' exists-action="delete" />
+    <redirect-content-urls />  <!-- mask body urls to apim url -->
+    </base>
+</outbound>
+```
+
+```xml
+<rate-limit-by-key calls="10"
+              renewal-period="60"
+              increment-condition="@(context.Response.StatusCode == 200)"
+              counter-key="@(context.Request.IpAddress)"/>
+```
+
+`<rate-limit-by-key` not available in consumption tier

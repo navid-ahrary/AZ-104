@@ -14,7 +14,7 @@ If you register an application in the portal:
 
 You also have a globally unique ID for your app (the app or client ID).
 
-### Application object:
+### Application object
 
 A Microsoft Entra application is scoped to its one and only application object. The application object resides in the Microsoft Entra tenant where the application was registered (known as the application's "home" tenant). An application object is used as a template or blueprint to create one or more service principal objects. A service principal is created in every tenant where the application is used.
 
@@ -68,7 +68,7 @@ Conditional Access enables developers and enterprise customers to protect servic
 
 MSLA.js
 
-https://learn.microsoft.com/en-us/entra/fundamentals/identity-fundamental-concepts?toc=%2Fentra%2Fidentity-platform%2Ftoc.json&bc=%2Fentra%2Fidentity-platform%2Fbreadcrumb%2Ftoc.json
+<https://learn.microsoft.com/en-us/entra/fundamentals/identity-fundamental-concepts?toc=%2Fentra%2Fidentity-platform%2Ftoc.json&bc=%2Fentra%2Fidentity-platform%2Fbreadcrumb%2Ftoc.json>
 
 ## shared access signatures
 
@@ -86,7 +86,7 @@ Azure Storage supports three types of shared access signatures:
 
 When you use a SAS to access data stored in Azure Storage, you need two components. The first is a URI to the resource you want to access. The second part is a SAS token that you've created to authorize access to that resource.
 
-- URI: https://medicalrecords.blob.core.windows.net/patient-images/patient-116139-nq8z7f.jpg?
+- URI: <https://medicalrecords.blob.core.windows.net/patient-images/patient-116139-nq8z7f.jpg>?
 - SAS token: sp=r&st=2020-01-20T11:42:32Z&se=2020-01-20T19:42:32Z&spr=https&sv=2019-02-02&sr=b&sig=SrW1HZ5Nb6MbRzTbXCaPm%2BJiSEn15tC91Y4umMPwVZs%3D
 
 sp=acdlrw
@@ -102,7 +102,7 @@ sv=2019-02-02 The version of the storage API to use.
 sr=b The kind of storage being accessed. In this example, b is for blob.
 sig=SrW1HZ5Nb6MbRzTbXCaPm%2BJiSEn15tC91Y4umMPwVZs%3D The cryptographic signature.
 
-### Best practices:
+### Best practices
 
 - The most secure SAS is a user delegation SAS. Use it wherever possible because it removes the need to store your storage account key in code. You must use Microsoft Entra ID to manage credentials. This option might not be possible for your solution.
 - Try to set your expiration time to the smallest useful value. If a SAS key becomes compromised, it can be exploited for only a short time.
@@ -164,7 +164,7 @@ Microsoft Graph is the gateway to data and intelligence in Microsoft 365. It pro
 
 In the Microsoft 365 platform, three main components facilitate the access and flow of data:
 
-- The Microsoft Graph API offers a single endpoint, https://graph.microsoft.com. You can use REST APIs or SDKs to access the endpoint. Microsoft Graph also includes a powerful set of services that manage user and device identity, access, compliance, security, and help protect organizations from data leakage or loss.
+- The Microsoft Graph API offers a single endpoint, <https://graph.microsoft.com>. You can use REST APIs or SDKs to access the endpoint. Microsoft Graph also includes a powerful set of services that manage user and device identity, access, compliance, security, and help protect organizations from data leakage or loss.
 - Microsoft Graph connectors work in the incoming direction, delivering data external to the Microsoft cloud into Microsoft Graph services and applications, to enhance Microsoft 365 experiences such as Microsoft Search. Connectors exist for many commonly used data sources such as Box, Google Drive, Jira, and Salesforce.
 - Microsoft Graph Data Connect provides a set of tools to streamline secure and scalable delivery of Microsoft Graph data to popular Azure data stores. The cached data serves as data sources for Azure development tools that you can use to build intelligent applications.
 
