@@ -51,7 +51,7 @@ az acr build --image sample/hello-world:latest  \
     --file Dockerfile .
 ```
 
-## Create Service Principal for pull access on ACR:
+## Create Service Principal for pull access on ACR
 
 ```azurecli
 az ad sp create-for-rbac \
