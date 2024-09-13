@@ -1,5 +1,7 @@
 # API Mangement
 
+<https://www.youtube.com/watch?v=K-tYU8GOUt0>
+
 ## Authentications Methods
 
 ### Subscriptions and Keys
