@@ -50,14 +50,14 @@ Note:
 
 - Port mapping is not supported, we just open container port to external
 
-```
+```azurecli
 az ad sp create-for-rbac \
 -n wavecountcontainerregistry01-pull
 --role acrpull
 --scope $(az acr show -n wavecountcontainerregitey01 --query id -o tsv)
 ```
 
-```
+```azurecli
 az container create --resource-group az-204-rg --name aci-demo --image wavecountcontainerregistry01.azurecr.io/go-sample:latest  --dns-name-label aci-demo-$RANDOM --port 8080 --registry-username $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-usr --query value -o tsv) --registry-password $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-pwd --query value -o tsv) --dns-name-label aci-demo-$RANDOM --query ipAddress.fqdn --restart-policy onFailure --environment-variables 'password'='Pa55word'
 ```
 
@@ -98,11 +98,11 @@ Container App Environment:
 
 An environment in Azure Container Apps creates a secure boundary around a group of container apps. Container Apps deployed to the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace.
 
-```
+```azurecli
 az extension add --name containerapp --upgrade
 ```
 
-```
+```azurecli
 az containerapp env create \
     --name $myAppContEnv \
     --resource-group $myRG \
@@ -111,7 +111,7 @@ az containerapp env create \
 
 Container App:
 
-```
+```azurecli
 az containerapp create -n my-container-app -g $myRG  --environment $myAppContEnv --image wavecountcontainerregistry01.azurecr.io/go-sample:latest  --registry-server  wavecountcontainerregistry01.azurecr.io   --target-port 8080 --ingress external  --query properties.configurations.ingress.fqdn
 ```
 
@@ -121,7 +121,7 @@ Configurations:
 
 The following code is an example of the containers array in the properties.template section of a container app resource template. The excerpt shows some of the available configuration options when setting up a container when using Azure Resource Manager (ARM) templates. Changes to the template ARM configuration section trigger a new container app revision.
 
-```
+```json
 "containers": [
   {
        "name": "main",
@@ -176,7 +176,7 @@ Container registries:
 You can deploy images hosted on private registries by providing credentials in the Container Apps configuration.
 To use a container registry, you define the required fields in registries array in the properties.configuration section of the container app resource template
 
-```
+```json
 {
   ...
   "registries": [{
@@ -218,7 +218,7 @@ Google /.auth/login/google Google
 
 Twitter /.auth/login/twitter Twitter
 
-Any OpenID Connect provider /.auth/login/<providerName> OpenID Connect
+Any OpenID Connect provider `/.auth/login/<providerName>` OpenID Connect
 
 ![alt text](https://learn.microsoft.com/en-us/training/wwl-azure/implement-azure-container-apps/media/container-apps-authorization-architecture.png)
 
@@ -239,14 +239,14 @@ The authentication flow is the same for all providers, but differs depending on 
 
 ### Updating your container app
 
-```
+```azurecli
 az containerapp update \
   --name <APPLICATION_NAME> \
   --resource-group <RESOURCE_GROUP_NAME> \
   --image <IMAGE_NAME>
 ```
 
-```
+```azurecli
 az containerapp revision list \
   --name <APPLICATION_NAME> \
   --resource-group <RESOURCE_GROUP_NAME> \
@@ -272,7 +272,7 @@ Before you delete a secret, deploy a new revision that no longer references the 
 _Note:_
 Container Apps doesn't support Azure Key Vault integration. Instead, enable managed identity in the container app and use the Key Vault SDK in your app to access secrets.
 
-```
+```azurecli
 az containerapp create \
   --resource-group "my-resource-group" \
   --name queuereader \
@@ -284,7 +284,7 @@ az containerapp create \
 After declaring secrets at the application level, you can reference them in environment variables when you create a new revision in your container app.
 When an environment variable references a secret, its value is populated with the value defined in the secret. To reference a secret in an environment variable in the Azure CLI, set its value to secretref:, followed by the name of the secret.
 
-```
+```azurecli
 az containerapp create \
   --resource-group "my-resource-group" \
   --name myQueueApp \
@@ -303,7 +303,7 @@ Dapr core concepts:
 | Label | Dapr                             | settings                                                                                                                                                                                                                                                                     | Description |
 | ----- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | 1.    | Container Apps with Dapr enabled | Dapr is enabled at the container app level by configuring a set of Dapr arguments. These values apply to all revisions of a given container app when running in multiple revisions mode.                                                                                     |
-| 2.    | Dapr                             | The fully managed Dapr APIs are exposed to each container app through a Dapr sidecar. The Dapr APIs can be invoked from your container app via HTTP or gRPC. The Dapr sidecar runs on HTTP port 3500 and gRPC port 50001.                                                    |
+| 2.    | Dapr                             | The fully managed Dapr APIs are exposed to each container app through a Dapr sidecar. The Dapr APIs can be invoked from your container app via HTTP or gRPC. The Dapr sidecar runs on HTTP port 3500 and gRPC port 50001. |
 | 3.    | Dapr component configuration     | Dapr uses a modular design where functionality is delivered as a component. Dapr components can be shared across multiple container apps. The Dapr app identifiers provided in the scopes array dictate which dapr-enabled container apps load a given component at runtime. |
 
 #### Dapr components and scopes
