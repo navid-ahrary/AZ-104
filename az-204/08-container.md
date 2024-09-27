@@ -13,6 +13,21 @@ Features:
 - Geo-replication: For scenarios requiring high-availability assurance, consider using the geo-replication feature of **Premium** registries. Geo-replication helps guard against losing access to your registry in a regional failure event. Geo-replication provides other benefits, too, like network-close image storage for faster pushes and pulls in distributed development or deployment scenarios.
 - Zone redundancy: A feature of the **Premium** service tier, zone redundancy uses Azure availability zones to replicate your registry to a minimum of three separate zones in each enabled region.
 
+## Tasks
+
+Task scenarios
+
+ACR Tasks supports several scenarios to build and maintain container images and other artifacts.
+
+- Quick task - Build and push a single container image to a container registry on-demand, in Azure, without needing a local Docker Engine installation. Think docker build, docker push in the cloud.
+- Automatically triggered tasks - Enable one or more triggers to build an image:
+  - Trigger on source code update
+  - Trigger on base image update
+  - Trigger on a schedule
+- Multi-step task - Extend the single image build-and-push capability of ACR Tasks with multi-step, multi-container-based workflows.
+
+Each ACR Task has an associated source code context - the location of a set of source files used to build a container image or other artifact. Example contexts include a Git repository or a local filesystem.
+
 ## Azure Container Instances
 
 ![alt text](https://learn.microsoft.com/en-us/training/wwl-azure/create-run-container-images-azure-container-instances/media/container-groups-example.png)
@@ -24,6 +39,14 @@ This example container group:
 - Exposes a single public IP address, with one exposed port.
 - Consists of two containers. One container listens on port 80, while the other listens on port 5000.
 - Includes two Azure file shares as volume mounts, and each container mounts one of the shares locally.
+
+Features:
+
+- fast startup
+- internet access
+- robust security
+- windows and linux
+- precise sizing
 
 Deployment:
 
@@ -58,7 +81,17 @@ az ad sp create-for-rbac \
 ```
 
 ```azurecli
-az container create --resource-group az-204-rg --name aci-demo --image wavecountcontainerregistry01.azurecr.io/go-sample:latest  --dns-name-label aci-demo-$RANDOM --port 8080 --registry-username $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-usr --query value -o tsv) --registry-password $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-pwd --query value -o tsv) --dns-name-label aci-demo-$RANDOM --query ipAddress.fqdn --restart-policy onFailure --environment-variables 'password'='Pa55word'
+az container create --resource-group az-204-rg \
+--name aci-demo \
+--image wavecountcontainerregistry01.azurecr.io/go-sample:latest  \
+--dns-name-label aci-demo-$RANDOM \
+--port 8080 \
+--registry-username $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-usr --query value -o tsv) \
+--registry-password $(az keyvault secret show --vault-name keyvault-wavecount -n wavecountcontainerregistry01-pull-pwd --query value -o tsv) \
+--dns-name-label aci-demo-$RANDOM \
+--query ipAddress.fqdn \
+--restart-policy onFailure \
+--environment-variables 'password'='Pa55word'
 ```
 
 ### Mount an Azure file share in Azure Container Instances
@@ -100,6 +133,7 @@ An environment in Azure Container Apps creates a secure boundary around a group 
 
 ```azurecli
 az extension add --name containerapp --upgrade
+az provider register --namespace Microsoft.App
 ```
 
 ```azurecli
@@ -112,7 +146,17 @@ az containerapp env create \
 Container App:
 
 ```azurecli
-az containerapp create -n my-container-app -g $myRG  --environment $myAppContEnv --image wavecountcontainerregistry01.azurecr.io/go-sample:latest  --registry-server  wavecountcontainerregistry01.azurecr.io   --target-port 8080 --ingress external  --query properties.configurations.ingress.fqdn
+az containerapp create \
+    -n my-container-app \
+    -g $myRG  \
+    --environment $myAppContEnv \
+    --image wavecountcontainerregistry01.azurecr.io/go-sample:latest \
+    --registry-server wavecountcontainerregistry01.azurecr.io \
+    --target-port 8080 \
+    --ingress 'external' \
+    --query properties.configurations.ingress.fqdn \
+    --secrets 'blob-con-name=$CONNECTION_STRING' \
+    --env-vars 'BlobContainer=mycontainer' 'ConnectionString=secretref:blob-con-string'
 ```
 
 ### Features
@@ -276,8 +320,8 @@ Container Apps doesn't support Azure Key Vault integration. Instead, enable mana
 az containerapp create \
   --resource-group "my-resource-group" \
   --name queuereader \
-  --environment "my-environment-name" \
   --image demos/queuereader:v1 \
+  --environment "my-environment-name" \
   --secrets "queue-connection-string=$CONNECTION_STRING"
 ```
 
@@ -320,3 +364,21 @@ By default, all Dapr-enabled container apps within the same environment load the
 
 Compare ACA vs AKS:
 <https://techcommunity.microsoft.com/t5/startups-at-microsoft/aca-vs-aks-which-azure-service-is-better-for-running-containers/ba-p/3815164>
+
+### Service Connector
+
+Service Connector helps you connect Azure compute services to other backing services. Service Connector configures the network settings and connection information (for example, generating environment variables) between compute services and target backing services in management plane. Developers use their preferred SDK or library that consumes the connection information to do data plane operations against the target backing service.
+
+Benefits:
+
+Service Connector offers several advantages, especially for developers working with Azure services. Here are some key benefits:
+
+1. **Simplified Connections**: Service Connector allows you to connect Azure compute services to other backing services with just a single command or a few clicks. This reduces the complexity of configuring network settings and connection information¹.
+
+2. **Ease of Use**: It provides a user-friendly experience through the Azure CLI or the Azure portal, making it accessible even for those who may not be deeply familiar with networking configurations¹.
+
+3. **Monitoring and Troubleshooting**: Service Connector includes features to monitor the health status of your connections and suggest actions to fix any broken connections¹.
+
+4. **Broad Compatibility**: It supports a wide range of Azure services, including Azure App Service, Azure Functions, Azure Kubernetes Service (AKS), and many more¹.
+
+5. **Focus on Business Logic**: By abstracting away the complexity of service wiring and connection management, developers can focus more on building their business logic rather than dealing with the intricacies of service configurations³.
