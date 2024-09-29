@@ -141,7 +141,7 @@ The following storage resources support stored access policies:
 
 The access policy for a SAS consists of the start time, expiry time, and permissions for the signature. You can specify all of these parameters on the signature URI and none within the stored access policy; all on the stored access policy and none on the URI; or some combination of the two. However, you can't specify a given parameter on both the SAS token and the stored access policy.
 
-```
+```azurecli
 az storage container policy create \
     --name <stored access policy identifier> \
     --container-name <container name> \
