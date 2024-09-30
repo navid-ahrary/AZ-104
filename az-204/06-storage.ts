@@ -1,8 +1,9 @@
+import { DefaultAzureCredential } from "@azure/identity";
 import { BlobServiceClient } from "@azure/storage-blob";
 import fs from "node:fs/promises";
 
 async function main() {
-  const client = BlobServiceClient.fromConnectionString("");
+  const client = new BlobServiceClient("", new DefaultAzureCredential());
 
   // const c = await client.createContainer('test')
   // console.log(c.containerClient.url);
