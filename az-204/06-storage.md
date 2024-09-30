@@ -13,13 +13,6 @@ Azure Storage offers two performance levels of storage accounts, standard and pr
 - Standard: This is the standard general-purpose v2 account and is recommended for most scenarios using Azure Storage.
 - Premium: Premium accounts offer higher performance by using solid-state drives. If you create a premium account you can choose between three account types, _block blobs_, _page blobs_, or _file shares_.
 
-The available **access** tiers are:
-
-- The Hot access tier, which is optimized for frequent access of objects in the storage account. The Hot tier has the highest storage costs, but the lowest access costs. New storage accounts are created in the hot tier by default.
-- The Cool access tier, which is optimized for storing large amounts of data that is infrequently accessed and stored for a minimum of 30 days. The Cool tier has lower storage costs and higher access costs compared to the Hot tier.
-- The Cold access tier, which is optimized for storing data that is infrequently accessed and stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
-- The Archive tier, which is available only for individual block blobs. The archive tier is optimized for data that can tolerate several hours of retrieval latency and remains in the Archive tier for a minimum 180 days. The archive tier is the most cost-effective option for storing data, but accessing that data is more expensive than accessing data in the hot or cool tiers.
-
 ## Blobs
 
 Azure Storage supports three types of blobs:
@@ -28,7 +21,14 @@ Azure Storage supports three types of blobs:
 - Append blobs are made up of blocks like block blobs, but are optimized for append operations. Append blobs are ideal for scenarios such as logging data from virtual machines.
 - Page blobs store random access files up to 8 TB in size. Page blobs store virtual hard drive (VHD) files and serve as disks for Azure virtual machines.
 
-Encryption key management
+The available **access** tiers for _block blob_ are:
+
+- The Hot access tier, which is optimized for frequent access of objects in the storage account. The Hot tier has the highest storage costs, but the lowest access costs. New storage accounts are created in the hot tier by default.
+- The Cool access tier, which is optimized for storing large amounts of data that is infrequently accessed and stored for a minimum of 30 days. The Cool tier has lower storage costs and higher access costs compared to the Hot tier.
+- The Cold access tier, which is optimized for storing data that is infrequently accessed and stored for a minimum of 90 days. The cold tier has lower storage costs and higher access costs compared to the cool tier.
+- The Archive tier, which is available only for individual block blobs. The archive tier is optimized for data that can tolerate several hours of retrieval latency and remains in the Archive tier for a minimum 180 days. The archive tier is the most cost-effective option for storing data, but accessing that data is more expensive than accessing data in the hot or cool tiers.
+
+### Encryption key management
 
 Data in a new storage account is encrypted with Microsoft-managed keys by default. You can continue to rely on Microsoft-managed keys for the encryption of your data, or you can manage encryption with your own keys. If you choose to manage encryption with your own keys, you have two options. You can use either type of key management, or both:
 
@@ -37,7 +37,7 @@ Data in a new storage account is encrypted with Microsoft-managed keys by defaul
 
 ## Policy
 
-```
+```json
 {
   "rules": [
     {
@@ -78,7 +78,7 @@ Data in a new storage account is encrypted with Microsoft-managed keys by defaul
 }
 ```
 
-```
+```json
 {
   "rules": [
     {
@@ -107,7 +107,7 @@ Data in a new storage account is encrypted with Microsoft-managed keys by defaul
 }
 ```
 
-```
+```azurecli
 az storage account management-policy create --account-name <storage-account> --policy @policy.json --resource-group <resource-group>
 ```
 
