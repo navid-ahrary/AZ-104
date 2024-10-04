@@ -22,7 +22,7 @@ An Azure Cosmos DB container is where data is stored. Unlike most relational dat
 
 Data is stored on one or more servers called partitions. To increase partitions, you increase throughput, or they grow automatically as storage increases. This relationship provides a virtually unlimited amount of throughput and storage for a container.
 
-When you create a container, you need to supply a partition key. The partition key is a property that you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Azure Cosmos DB uses the value of this property to route data to the appropriate partition to be written, updated, or deleted. You can also use the partition key in the WHERE clause in queries for efficient data retrieval.
+When you create a container, you need to supply a partition key. The partition key is a property that you select from your items to help Azure Cosmos DB distribute the data efficiently across partitions. Azure Cosmos DB uses the value of this property to route data to the appropriate partition to be written, updated, or deleted. You can also use the partition key in the WHERE clause in queries for efficient data retrieval. __It's like primary key in RDBS__.
 
 The underlying storage mechanism for data in Azure Cosmos DB is called a physical partition. Physical partitions can have a throughput amount up to 10,000 Request Units per second, and they can store up to 50 GB of data. Azure Cosmos DB abstracts this partitioning concept with a logical partition, which can store up to 20 GB of data.
 
@@ -122,3 +122,18 @@ Azure recommends to use _Push model_, but in some scenario we might want the ext
 ## Reading change feed with a push model
 
 There are two ways you can read from the change feed with a push model: Azure Functions Azure Cosmos DB triggers, and the change feed processor library (.Net and Java). Azure Functions uses the change feed processor behind the scenes, so these are both similar ways to read the change feed.
+
+Python and Nodejs SDK just support pull model.
+
+## Points
+
+```azurecli
+az cosmosdb create  --name cos-frc-demo -g rg-demo \      
+--default-consistency-level Session \
+--locations regionName=francecentral isZoneRedundant=False failoverPriority=0 \
+--locations regionName=germanynorth failoverPriority=1 isZoneRedundant=False 
+```
+
+### Note when using SDK to connect CosmosDB
+
+__Consistency Level Strong specified in the request is invalid when service is configured with consistency level Session. Ensure the request consistency level is not stronger than the service consistency level.__
