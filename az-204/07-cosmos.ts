@@ -1,14 +1,7 @@
-import {
-  ChangeFeedIterator,
-  ChangeFeedStartFrom,
-  CosmosClient,
-  PartitionKeyKind,
-  StatusCodes,
-} from "@azure/cosmos";
-import { randomUUID } from "node:crypto";
-const ENDPOINT = "https://cos-frc-demo-francecentral.documents.azure.com:443/";
-const KEY =
-  "jxTr87V6yGDOjIYoNBIxT1yAsaza79aYckATw7B4F5NxiCFPXnwmBpCjfiCtkOOPY8S3tJ6XDfW4ACDbeqjBSw==";
+import { ChangeFeedStartFrom, CosmosClient, StatusCodes } from "@azure/cosmos";
+
+const ENDPOINT = process.env.ENDPOINT ?? "";
+const KEY = process.env.KEY ?? "";
 const DATABASE_ID = "Certificates";
 const CONTAINER_ID = "AZ-204";
 const PARTITION_KEY = "/id";
