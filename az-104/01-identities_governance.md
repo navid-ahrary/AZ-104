@@ -1,6 +1,5 @@
-# Manage Identities and Governance
 
-## Table of contents
+# Table of contents
 
 - [Manage Identities and Governance](#manage-identities-and-governance)
   - [Entra ID](#entra-id)
@@ -37,7 +36,7 @@ This module explains Microsoft Entra ID. You'll compare Microsoft Entra ID to Ac
 
 Microsoft Entra ID is a cloud-based identity and access management service provided by Microsoft. Microsoft Entra ID is a comprehensive solution for managing identities, enforcing access policies, and securing your applications and data in the cloud and on-premises.
 
-#### Usage:
+#### Usage
 
 - Configuring access to applications
 - Configuring single sign-on (SSO) to cloud-based SaaS applications
@@ -58,7 +57,7 @@ At any given time, an Azure subscription must be associated with one, and only o
 - Note:
   You can associate the same Microsoft Entra tenant with multiple Azure subscriptions. This allows you to use the same users, groups, and applications to manage resources across multiple Azure subscriptions
 
-#### Entra ID vs Active Directory Domain Service:
+#### Entra ID vs Active Directory Domain Service
 
 - Implementing Microsoft Entra ID isn't the same as deploying virtual machines in Azure, adding AD DS, and then deploying some domain controllers for a new forest and domain. Microsoft Entra ID is a different service, much more focused on providing identity management services to web-based apps, unlike AD DS, which is more focused on on-premises apps.
 - Unlike AD DS, Microsoft Entra ID is multi-tenant by design and is implemented specifically to ensure isolation between its individual directory instances.
@@ -71,7 +70,7 @@ Entra ID include two parts:
 2- servicePrincipal classes: An object in the servicePrincipal class constitutes its instance in the current Microsoft Entra tenant.
 Separating these two sets of characteristics allows you to define an application in one tenant and ,use it across multiple tenants by creating a service principal object for this application in each tenant. Microsoft Entra ID creates the service principal object when you register the corresponding application in that Microsoft Entra tenant.
 
-##### Characteristics of AD DS:
+##### Characteristics of AD DS
 
 - AD DS is a true directory service, with a hierarchical X.500-based structure.
 - AD DS uses Domain Name System (DNS) for locating resources such as domain controllers.
@@ -83,7 +82,7 @@ Separating these two sets of characteristics allows you to define an application
 
 You can deploy AD DS on an Azure virtual machine to enable scalability and availability for an on-premises AD DS. However, deploying AD DS on an Azure virtual machine doesn't make any use of Microsoft Entra ID.
 
-##### Characteristics of Microsoft Entra ID:
+##### Characteristics of Microsoft Entra ID
 
 - Microsoft Entra ID is primarily an identity solution, and it’s designed for internet-based applications by using HTTP (port 80) and HTTPS (port 443) communications.
 - Microsoft Entra ID is a multi-tenant directory service.
@@ -96,7 +95,7 @@ When you deploy cloud services such as Microsoft 365 or Intune, you also need to
 
 In particular, you can enable Microsoft Entra authentication for the Web Apps feature of Azure App Service directly from the Authentication/Authorization blade in the Azure portal. By designating the Microsoft Entra tenant, you can ensure that only users with accounts in that directory can access the website. It’s possible to apply different authentication settings to individual deployment slots.
 
-#### Compare Microsoft Entra ID P1 and P2 plans:
+#### Compare Microsoft Entra ID P1 and P2 plans
 
 The Microsoft Entra ID P1 or P2 tier provides extra functionality as compared to the Free and Office 365 editions. However, premium versions require additional cost per user provisioning. Microsoft Entra ID P1 or P2 comes in two versions P1 and P2. You can procure it as an extra license or as a part of the Microsoft Enterprise Mobility + Security, which also includes the license for Azure Information Protection and Intune.
 
@@ -117,7 +116,7 @@ In addition to these features, the Microsoft Entra ID P2 license provides extra 
 - Microsoft Entra ID Protection. This feature provides enhanced functionalities for monitoring and protecting user accounts. You can define user risk policies and sign-in policies. In addition, you can review users’ behavior and flag users for risk.
 - Microsoft Entra Privileged Identity Management. This functionality lets you configure additional security levels for privileged users such as administrators. With Privileged Identity Management, you define permanent and temporary administrators. You also define a policy workflow that activates whenever someone wants to use administrative privileges to perform some task.
 
-#### Entra ID Domain Service:
+#### Entra ID Domain Service
 
 To move AD DS authentication for line-of-business applications from on-premise into Azure, Entra ID DS is the option. Which is part of Entra ID P1 and P2 tier. It provides domain services such as Group Policy management, domain joining, and Kerberos authentication to your Microsoft Entra tenant. These services are fully compatible with locally deployed AD DS, so you can use them without deploying and managing additional domain controllers in the cloud.
 Because Microsoft Entra ID can integrate with your local AD DS, when you implement _Microsoft Entra Connect_, users can utilize organizational credentials in both on-premises AD DS and in Microsoft Entra Domain Services. Even if you don’t have AD DS deployed locally, you can choose to use Microsoft Entra Domain Services as a cloud-only service. This enables you to have similar functionality of locally deployed AD DS without having to deploy a single domain controller on-premises or in the cloud. For example, an organization can choose to create a Microsoft Entra tenant and enable Microsoft Entra Domain Services, and then deploy a virtual network between its on-premises resources and the Microsoft Entra tenant. You can enable Microsoft Entra Domain Services for this virtual network so that all on-premises users and services can use domain services from Microsoft Entra ID.
@@ -148,7 +147,7 @@ Every user who wants access to Azure resources needs an Azure user account. A us
 2- Directory-synchronized identity: User accounts that have a directory-synchronized identity are defined in an on-premises Active Directory. A synchronization activity occurs via Microsoft Entra Connect to bring these user accounts in to Azure. The source for these accounts is Windows Server Active Directory.
 3- Guest user: Guest user accounts are defined outside Azure. Examples include user accounts from other cloud providers, and Microsoft accounts like an Xbox LIVE account. The source for guest user accounts is Invited user. Guest user accounts are useful when external vendors or contractors need access to your Azure resources.
 
-#### Creat user accounts:
+#### Creat user accounts
 
 Create users one by one or bulk with a csv emplate.
 
@@ -168,13 +167,13 @@ Microsoft Entra ID allows your organization to define two different types of gro
 2- Dynamic user: Use dynamic membership rules to automatically add and remove group members. When member attributes change, Azure reviews the dynamic group rules for the directory.
 3- Dynamic device (Security groups only): Apply dynamic group rules to automatically add and remove devices in security groups. When device attributes change, Azure reviews the dynamic group rules for the directory.
 
-#### Administative Units:
+#### Administative Units
 
 Restrict administrative scope by using administrative units for your organization. The division of roles and responsibilities is especially helpful for organizations that have many independent divisions.
 
-### Manage Subscriptions:
+### Manage Subscriptions
 
-#### Azure Region:
+#### Azure Region
 
 A region is a geographical area on the planet containing at least one, but potentially multiple datacenters. The datacenters are in close proximity and networked together with a low-latency network.
 Most Azure regions are paired with another region within the same geography to make a regional pair (or paired regions). Regional pairs help to support always-on availability of Azure resources used by your infrastructure.
@@ -193,7 +192,7 @@ _Considerations_:
 - Consider services that don't require regions. Identify services that don't need region support. Some global Azure services that don't require you to select a region. These services include Microsoft Entra ID, Microsoft Azure Traffic Manager, and Azure DNS.
 - Consider benefits of data residency. Take advantage of the benefits of data residency offered by regional pairs. This feature can help you meet requirements for tax and law enforcement jurisdiction purposes.
 
-### Subscriptions:
+### Subscriptions
 
 An Azure subscription is a logical unit of Azure services that's linked to an Azure account. Subscriptions help you organize access to Azure cloud service resources, and help you control how resource usage is reported, billed, and paid.
 
@@ -205,7 +204,7 @@ _Things to Know:_
 - If your Azure account is the only account associated with a subscription, you're responsible for the billing requirements.
 - Billing for Azure services is done on a per-subscription basis.
 
-### Obtain a subscription:
+### Obtain a subscription
 
 _Azure subscription Types:_
 Free, Pay-As-You-Go, Enterprise Agreement, and Student.
@@ -245,11 +244,11 @@ Free, Pay-As-You-Go, Enterprise Agreement, and Student.
 - **Budgets**: Use budgets to compare and track spending as you analyze costs.
 - **Pricing Calculator**: The _Pricing Calculator_ provides estimates in all areas of Azure, including compute, networking, storage, web, and databases.
 
-### Azure Policy:
+### Azure Policy
 
 Azure Policy is a **service** in Azure that enables you to create, assign, and manage policies to control or audit your resources. These policies enforce different rules over your resource configurations so the configurations stay compliant with corporate standards.
 
-#### Management Group:
+#### Management Group
 
 Azure management groups provide a level of scope and control above your subscriptions
 
@@ -272,7 +271,7 @@ _Example_:
 - You can specify the set of virtual machine SKUs that your organization can deploy.
 - You can choose the geographic locations or regions that are available to your organization.
 
-#### Create Azure Policy:
+#### Create Azure Policy
 
 A **_policy definition_** describes the compliance conditions for a resource, and the actions to complete when the conditions are met. One or more policy definitions are grouped into an **_initiative definition_**, to control the scope of your policies and evaluate the compliance of your resources.
 
@@ -311,7 +310,7 @@ There are four basic steps to create and work with policy definitions in Azure P
 
 - **Step 4: Determine compliance**
 
-### Configure role-based access control:
+### Configure role-based access control
 
 Azure Administrators need to secure access to their Azure resources like virtual machines (VMs), websites, networks, and storage. Administrators need mechanisms to help them manage who can access their resources, and what actions are allowed.
 Role-based access control (RBAC) is a mechanism that can help you **manage who can access your Azure resources**. RBAC lets you determine what operations specific users can do on specific resources, and control what areas of a resource each user can access.
@@ -350,7 +349,7 @@ Considerations:
 - Consider controlling changes to data. Identify data or resources that should only be modified in specific scenarios and apply tight access control. Limit users to the least of amount of access they need to get their work done.
 - Consider applying deny assignments. Determine if you need to implement the deny assignment feature. Similar to a role assignment, a deny assignment attaches a set of deny actions to a user, group, or service principal at a particular scope for the purpose of denying access.
 
-#### Role assignment:
+#### Role assignment
 
 A role assignment is the process of scoping a role definition to limit permissions for a requestor, such as a user, group, service principal, or managed identity.
 
@@ -377,12 +376,12 @@ Built-in role definitions are defined for several categories of services, tasks,
 
 Microsoft Entra ID also provides built-in roles to manage resources in Microsoft Entra ID, including users, groups, and domains. Microsoft Entra ID offers administrator roles that you can implement for your organization, such as Global admin, Application admin, and Application developer.
 
-![](./assets/role-based-authentication-b3dda7ae.png)
+![img](./assets/role-based-authentication-b3dda7ae.png)
 
 - Microsoft Entra admin roles are used to manage resources in Microsoft Entra ID, such as users, groups, and domains. These roles are defined for the Microsoft Entra tenant at the root level of the configuration.
 - Azure RBAC roles provide more granular access management for Azure resources. These roles are defined for a requestor or resource and can be applied at multiple levels: the root, management groups, subscriptions, resource groups, or resources.
 
-### Create User and Group in Entra ID:
+### Create User and Group in Entra ID
 
 What is User accounts in Entra ID:
 A user's account access consists of the type of user, their role assignments, and their ownership of individual objects.
@@ -407,27 +406,27 @@ There are different ways you can assign access rights:
 - Group assignment: Assign a group the required access rights, and members of the group will inherit those rights.
 - Rule-based assignment: Use rules to determine a group membership based on user or device properties. For a user account or device's group membership to be valid, the user or device must meet the rules. If the rules aren't met, the user account or device's group membership is no longer valid. The rules can be simple. You can select prewritten rules or write your own advanced rules.
 
-#### Group:
+#### Group
 
 dynamic assignment:
 You can create attribute-based rules to enable dynamic membership for a group in Microsoft Entra ID, part of Microsoft Entra. Dynamic group membership adds and removes group members automatically using membership rules based on member attributes. Example: _The membership of this group now depends on whether the user is in the United States._
 
 When the attributes of a user or a device change, the system evaluates all dynamic group rules in a directory to see if the change would trigger any group adds or removes. If a user or device satisfies a rule on a group, they're added as a member of that group. If they no longer satisfy the rule, they're removed. You can't manually add or remove a member of a dynamic group.
 
-#### Microsoft Entra B2B:
+#### Microsoft Entra B2B
 
 You want the external team to collaborate with the internal developer team in a process that's easy and secure. With Microsoft Entra business to business (B2B), you can add people from other companies to your Microsoft Entra tenant as guest users.
 If your organization has multiple Microsoft Entra tenants, you may also want to use Microsoft Entra B2B to give a user in tenant A access to resources in tenant B. Each Microsoft Entra tenant is distinct and separate from other Microsoft Entra tenants and has its own representation of identities and app registrations.
 With Microsoft Entra B2B, you don't have to manage your external users' identities. The partner has the responsibility to manage its own identities on their tenant. External users continue to use their current identities to collaborate with your organization.
 After you invite a user, their account is added to Microsoft Entra ID, with a guest user type.
 
-##### Add guest users to an application:
+##### Add guest users to an application
 
-### Secure Resource with Azure RBAC:
+### Secure Resource with Azure RBAC
 
 Who (Service Principal), What (Role definition), Where (Scope) => Role Assignment
 
-### Self-service Password reset (SSPR):
+### Self-service Password reset (SSPR)
 
 A strong, two-method authentication policy is always applied to accounts with an administrator role, regardless of your configuration for other users.
 The security-question method isn't available to accounts associated with an administrator role.
