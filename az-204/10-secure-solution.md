@@ -86,11 +86,11 @@ The DefaultAzureCredential attempts to authenticate via the following mechanisms
 
 - By default, when you create a new Azure Key Vault, no users (including the creator) have permissions to access or manage the secrets, keys, or certificates stored within it. This is a security measure to ensure that only explicitly granted users or applications can access the sensitive data.
 
-```Bash
- az role assignment create --role "Key Vault Secrets Officer" --assignee <user-objectId $(az ad signed-in-user show --query id -o tsv) $(az ad user show  --id email@example.tld --query id -o tsv)> --scope $(az keyvault show --name kv-frc-demo -g rg-demo --query id -o tsv)
+```azurecli
+az role assignment create --role "Key Vault Secrets Officer" --assignee <user-objectId $(az ad signed-in-user show --query id -o tsv) $(az ad user show --id email@example.tld --query id -o tsv)> --scope $(az keyvault show --name kv-frc-demo -g rg-demo --query id -o tsv)
 ```
 
-```TypeScript
+```typescript
 import { DefaultAzureCredential } from "@azure/identity";
 import { SecretClient } from "@azure/keyvault-secrets";
 import { KeyClient } from "@azure/keyvault-keys";
@@ -105,7 +105,6 @@ async function run() {
   const poll = await client.beginRecoverDeletedSecret("key-01");
   await poll.pollUntilDone();
   const saved = await client.setSecret("key-01", "navid");
-  console.log(saved);
 
   const deletePoller = await client.beginDeleteSecret("key-01");
   await deletePoller.pollUntilDone();

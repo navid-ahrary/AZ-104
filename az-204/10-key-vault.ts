@@ -4,7 +4,8 @@ import { KeyClient } from "@azure/keyvault-keys";
 
 const KEY_VAULT_URL = "https://kv-frc-demo.vault.azure.net/";
 
-const credential = new DefaultAzureCredential();
+// for user-managed identity
+const credential = new DefaultAzureCredential({ managedIdentityClientId: "" });
 
 async function runSecret() {
   const client = new SecretClient(KEY_VAULT_URL, credential);
@@ -24,6 +25,5 @@ async function runKey() {
   await client.createRsaKey("MyKey", { keySize: 4096 });
 }
 
-// runSecret();
-
+runSecret();
 runKey();

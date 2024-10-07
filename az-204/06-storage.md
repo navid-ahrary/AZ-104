@@ -161,3 +161,7 @@ Beginning with service version 2021-02-12, you can rehydrate an archived blob by
 ## Change a blob's access tier to an online tier
 
 Once a Set Blob Tier request is initiated, it can't be canceled. During the rehydration operation, the blob's access tier setting continues to show as archived until the rehydration process is complete.
+
+```azurecli
+az storage blob set-tier --account-name mystorageaccount --container-name mycontainer --name myblob --tier Hot --rehydrate-priority High
+```
