@@ -3,7 +3,7 @@
 | Tier | Description |
 |------|-------------|
 |Basic | An OSS Redis cache running on a single virtual machine (VM). This tier has no service-level agreement (SLA) and is ideal for development/test and noncritical workloads. |
-| Standard | An OSS Redis cache running on two VMs in a replicated configuration.
+| Standard | An OSS Redis cache running on two VMs in a replicated configuration|
 | Premium | High-performance OSS Redis caches. This tier offers higher throughput, lower latency, better availability, and more features. Premium caches are deployed on more powerful VMs compared to the VMs for Basic or Standard caches |
 | Enterprise | High-performance caches powered by Redis Labs' Redis Enterprise software. This tier supports Redis modules including RediSearch, RedisBloom, and RedisTimeSeries. Also, it offers even higher availability than the Premium tier.|
 | Enterprise Flash | Cost-effective large caches powered by Redis Labs' Redis Enterprise software. This tier extends Redis data storage to nonvolatile memory, which is cheaper than DRAM, on a VM. It reduces the overall per-GB memory cost.|
@@ -17,7 +17,6 @@ The name must be between 1 and 63 characters, composed of numbers, letters, and 
 ## Clustering support
 
 With the Premium, Enterprise, and Enterprise Flash tiers you can implement clustering to automatically split your dataset among multiple nodes. To implement clustering, you specify the number of shards to a maximum of 10. The cost incurred is the cost of the original node, multiplied by the number of shards.
-
 
 Choosing the right tier
 

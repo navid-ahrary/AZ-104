@@ -46,9 +46,19 @@ az acr create --resource-group "$RGNAME" \
 echo 'FROM golang:1.22.6-alpine' > Dockerfile
 echo 'ENTRYPOINT ["go", "version"]' >> Dockerfile
 
+az acr login -n "$ACRNAME"
+
 az acr build --image sample/hello-world:latest  \
     --registry "$ACRNAME" \
     --file Dockerfile .
+    
+az acr run --registry "$ACRNAME" --cmd '$REGISTRY/sample/hello-world/latest' /dev/null
+```
+
+## Run Image
+
+```azurecli
+az acr run --registry "$ACRNAME" --cmd "$REGISTRY/sample/hello-world:latest" /dev/null
 ```
 
 ## Create Service Principal for pull access on ACR
@@ -64,6 +74,10 @@ az ad sp create-for-rbac \
 
 ```azurecli
 export KVNAME="kv-myapp-frc-dev-01"
+
+az keyvault update --name <YourKeyVaultName> --enable-soft-delete true
+
+az keyvault update --name <YourKeyVaultName> --enable-purge-protection true
 
 az keyvault create --resource-group "$RGNAME" \
     --name "$KVNAME" \
