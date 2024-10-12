@@ -32,8 +32,8 @@ The message is _JSON_ based on CloudEvent 1.0 cloud antive specification.
 
 ## There are several kinds of topics: custom topics, system topics, and partner topics
 
-- **Custom Topics**: These are user-defined endpoints where you can send events from your applications. They are useful for creating a collection of related events that subscribers can filter and respond to1.
-- **System Topics**: These are built-in topics provided by Azure services. They automatically publish events related to the service’s operations, such as resource creation or deletion2.
+- **Custom Topics**: These are user-defined endpoints where you can send events from your applications. They are useful for creating a collection of related events that subscribers can filter and respond to.
+- **System Topics**: These are built-in topics provided by Azure services. They automatically publish events related to the service’s operations, such as resource creation or deletion.
 - **Partner Topics**: These are topics provided by third-party services that integrate with Azure Event Grid. They allow you to subscribe to events from external services.
 
 ## Event Handlers
@@ -43,4 +43,3 @@ Depending on the type of handler, Event Grid follows different mechanisms to gua
 ## Security
 
 If using push delivery, the event handler is an Azure service, and a managed identity is used to authenticate Event Grid, the managed identity should have an appropriate RBAC role. For example, if sending events to Event Hubs, the managed identity used in the event subscription should be a member of the _Event Hubs Data Sender_ role.
-
