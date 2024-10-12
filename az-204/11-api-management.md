@@ -144,13 +144,11 @@ If the request contains `Authorization` header, the cache policy doesn't work.
 ### Use vary-by tags
 
 It's important to ensure that, if you serve a response from the cache, it's relevant to the original request. However, you also want to use the cache as much as possible. Suppose, for example, that the board games Stock Management API received a GET request to the following URL and cached the result:
-
 http://<boardgames.domain>/stock/api/product?partnumber=3416&customerid=1128
 
 This request is intended to check the stock levels for a product with part number 3416. The customer ID is used by a separate policy, and doesn't alter the response. Subsequent requests for the same part number can be served from the cache, as long as the record hasn't expired. So far, so good.
 
 Now suppose that a different customer requests the same product:
-
 http://<boardgames.domain>/stock/api/product?partnumber=3416&customerid=5238
 
 By default, the response can't be served from the cache, because the customer ID is different.
@@ -194,7 +192,6 @@ You might choose to use an external cache because:
 - You want to have greater control over the cache configuration than the internal cache allows.
 - You want to cache more data than can be stored in the internal cache.
 - Avoid having your cache periodically cleared during API Management updates
-- Have more control over your cache configuration
 - Enable caching in the API Management self-hosted gateway
 - Use caching with the Consumption tier of API Management:
     Another reason to configure an external cache is that you want to use caching with the Consumption pricing tier. This tier follows serverless design principles (stateless), and you should use it with serverless web APIs. For this reason, it has no internal cache. If you want to use caching with an API Management instance in the Consumption tier, you must use an external cache.
