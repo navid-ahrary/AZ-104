@@ -41,14 +41,14 @@ Auto swap streamlines Azure DevOps Services scenarios where you want to deploy y
 
 ## Specify custom warm-up
 
-```
-<system.webServer>
-    <applicationInitialization>
-        <add initializationPage="/" hostName="[app hostname]" />
-        <add initializationPage="/Home/About" hostName="[app hostname]" />
-    </applicationInitialization>
-</system.webServer>
-```
+    ```xml
+    <system.webServer>
+        <applicationInitialization>
+            <add initializationPage="/" hostName="[app hostname]" />
+            <add initializationPage="/Home/About" hostName="[app hostname]" />
+        </applicationInitialization>
+    </system.webServer>
+    ```
 
 `WEBSITE_SWAP_WARMUP_PING_PATH`: The path to ping to warm up your site. Add this app setting by specifying a custom path that begins with a slash as the value. An example is /statuscheck. The default value is /.
 
