@@ -25,7 +25,7 @@ When you swap two slots (for example, from a staging slot to the production slot
 
     If auto swap is enabled with custom warm-up, trigger Application Initiation by making an HTTP request to the application root ("/") on each instance of the source slot.
 
-        If applicationInitialization isn't specified, trigger an HTTP request to the application root of the source slot on each instance.
+        If Application Initialization isn't specified, trigger an HTTP request to the application root of the source slot on each instance.
 
         If an instance returns any HTTP response, it's considered to be warmed up.
 
