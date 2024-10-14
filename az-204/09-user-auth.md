@@ -147,7 +147,7 @@ az storage container policy create \
     --container-name <container name> \
     --start <start time UTC datetime> \
     --expiry <expiry time UTC datetime> \
-    --permissions <(a)dd, (c)rظeate, (d)elete, (l)ist, (r)ead, or (w)rite> \
+    --permissions <(a)dd, (c)reate, (d)elete, (l)ist, (r)ead, or (w)rite> \
     --account-key <storage account key> \
     --account-name <storage account name>
 ```

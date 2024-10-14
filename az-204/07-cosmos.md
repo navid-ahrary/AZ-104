@@ -131,7 +131,7 @@ Python and Nodejs SDK just support pull model.
 az cosmosdb create  --name cos-frc-demo -g rg-demo \      
 --default-consistency-level Session \
 --locations regionName=francecentral isZoneRedundant=False failoverPriority=0 \
---locations regionName=germanynorth failoverPriority=1 isZoneRedundant=False 
+--locations regionName=germanynorth isZoneRedundant=False failoverPriority=1
 ```
 
 ### Note when using SDK to connect CosmosDB
